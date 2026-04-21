@@ -5,6 +5,7 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide product name'],
     trim: true,
+    index: true,
   },
   description: {
     type: String,
@@ -17,19 +18,12 @@ const productSchema = new mongoose.Schema({
   category: {
     type: String,
     required: [true, 'Please provide product category'],
-    enum: ['Electronics', 'Clothing', 'Accessories', 'Home', 'Beauty'],
+    enum: ['electronics', 'clothing', 'accessories', 'home', 'beauty'],
+    index: true,
   },
-  imageUrl: {
+  image: {
     type: String,
     required: [true, 'Please provide product image URL'],
-  },
-  rating: {
-    type: Number,
-    default: 0,
-  },
-  numReviews: {
-    type: Number,
-    default: 0,
   },
   countInStock: {
     type: Number,

@@ -13,16 +13,20 @@ app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
 
 // routes
-// app.use('/api/auth', require('./routes/auth.routes'));
-// app.use('/api/products', require('./routes/product.routes'));
-// app.use('/api/payments', require('./routes/payment.routes'));
+app.use('/api/auth', require('./routes/auth.routes'));
+app.use('/api/products', require('./routes/product.routes'));
+app.use('/api/orders', require('./routes/order.routes'));
+app.use('/api/payments', require('./routes/payment.routes'));
 
 // Health Check
 app.get('/', (req, res) => {
     res.json({ message: 'Server is running' });
 });
 
+const { notFound, errorHandler } = require('./middleware/error.middleware');
+
 // error middleware
-// app.use(errorMiddleware);
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;
