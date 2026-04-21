@@ -1,5 +1,14 @@
 const multer = require('multer');
 const path = require('path');
+const ApiError = require('../utils/ApiError');
+
+/**
+ * @desc Multer storage configuration
+ * @return {Function} - Storage configuration
+ * @param {Object} req - Request object
+ * @param {Object} file - File object
+ * @param {Function} cb - Callback function
+ */
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -16,7 +25,7 @@ const storage = multer.diskStorage({
         if (mimetype && extname) {
             cb(null, true);
         } else {
-            cb(new Error('Error: Images only!'));
+            cb(new ApiError(400, 'Error: Images only!'));
         }
     },
 });
