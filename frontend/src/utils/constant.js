@@ -1,10 +1,10 @@
-export const BASE_URL = "http://localhost:5000/api";
+export const BASE_URL = "http://localhost:5000";
 
 export const API_ENDPOINTS = {
-  PRODUCT: `${BASE_URL}/product`,
-  AUTH: `${BASE_URL}/auth`,
-  ORDER: `${BASE_URL}/order`,
-  PAYMENT: `${BASE_URL}/payment`,
+  PRODUCT: `${BASE_URL}/api/product`,
+  AUTH: `${BASE_URL}/api/auth`,
+  ORDER: `${BASE_URL}/api/order`,
+  PAYMENT: `${BASE_URL}/api/payment`,
 };
 
 export const ORDER_STATUS = {

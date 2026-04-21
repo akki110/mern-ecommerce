@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useParams } from "react-router-dom";
-import { Minus, Plus, ShoppingCart, Star, ShieldCheck, Truck } from "lucide-react";
+import {
+  Minus,
+  Plus,
+  ShoppingCart,
+  Star,
+  ShieldCheck,
+  Truck,
+} from "lucide-react";
 import { useCartData } from "../context/CartContext";
 
 export const ProductDetails = () => {
@@ -13,20 +20,22 @@ export const ProductDetails = () => {
   const product = {
     id: 1,
     name: "Minimalist Leather Watch",
-    description: "A sleek, minimalist watch with a genuine leather strap. This timepiece combines classic elegance with modern functionality, making it perfect for both formal and casual settings. Crafted with a stainless steel case and scratch-resistant sapphire glass.",
+    description:
+      "A sleek, minimalist watch with a genuine leather strap. This timepiece combines classic elegance with modern functionality, making it perfect for both formal and casual settings. Crafted with a stainless steel case and scratch-resistant sapphire glass.",
     category: "Accessories",
     price: 120.0,
     stock: true,
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image:
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   };
 
   const handleCart = () => {
     addToCart(product, quantity);
   };
 
-  const handleBuyNow = () => {
-    toast.loading("Redirecting to checkout...");
-  };
+  // const handleBuyNow = () => {
+  //   toast.loading("Redirecting to checkout...");
+  // };
 
   return (
     <div className="min-h-screen bg-background">
@@ -54,21 +63,6 @@ export const ProductDetails = () => {
                 loading="lazy"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
-            </div>
-            {/* Thumbnail Placeholders (Optional) */}
-            <div className="grid grid-cols-4 gap-4 mt-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="aspect-square rounded-lg border border-border overflow-hidden bg-gray-50 cursor-pointer hover:border-primary transition-colors"
-                >
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover opacity-70"
-                  />
-                </div>
-              ))}
             </div>
           </div>
 
@@ -137,12 +131,12 @@ export const ProductDetails = () => {
                 <ShoppingCart className="w-5 h-5" />
                 Add to Cart
               </button>
-              <button
+              {/* <button
                 onClick={handleBuyNow}
                 className="flex-1 px-8 py-4 bg-text-main text-white font-bold rounded-xl hover:bg-black transition-all"
               >
                 Buy Now
-              </button>
+              </button> */}
             </div>
 
             {/* Features/Trust Badges */}
