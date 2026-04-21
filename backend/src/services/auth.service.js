@@ -6,8 +6,6 @@ const { generateToken } = require('../utils/jwt');
 
 /**
  * @desc    Register a new user
- * @route   POST /api/auth/register
- * @access  Public
  */
 exports.register = async (name, email, password) => {
 
@@ -38,8 +36,6 @@ exports.register = async (name, email, password) => {
 
 /**
  * @desc    Login a user
- * @route   POST /api/auth/login
- * @access  Public
  */
 exports.login = async (email, password) => {
 
@@ -71,8 +67,6 @@ exports.login = async (email, password) => {
 
 /**
  * @desc Get current logged in user
- * @route GET /api/auth/me
- * @access Private
  */
 exports.getCurrentUser = async (userId) => {
     const user = await User.findById(userId);
