@@ -51,6 +51,12 @@ export const Cart = () => {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
+                shippingAddress: {
+                  address: "123 Test Street",
+                  city: "Mumbai",
+                  postalCode: "400001",
+                  country: "India"
+                }
               },
             });
             console.log("Verify Response:", verify); // Debugging

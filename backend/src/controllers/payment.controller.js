@@ -23,8 +23,16 @@ exports.createOrder = asyncHandler(async (req, res) => {
  */
 
 exports.verifyPayment = asyncHandler(async (req, res) => {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-    const response = await paymentService.verifyPayment(razorpay_order_id, razorpay_payment_id, razorpay_signature);
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, shippingAddress } = req.body;
+
+    // Pass req.user.id and shippingAddress to the service
+    const response = await paymentService.verifyPayment(
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature,
+        req.user.id,
+        shippingAddress
+    );
 
     return res.status(200).json(response);
 });

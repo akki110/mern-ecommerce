@@ -2,6 +2,8 @@ const razorpay = require('../utils/razorpay');
 const crypto = require('crypto');
 const ApiResponse = require('../utils/ApiResponse');
 const ApiError = require('../utils/ApiError');
+const Order = require('../models/order.model');
+const Cart = require('../models/cart.model');
 
 /**
  * @desc Create Razorpay Order  
@@ -22,16 +24,15 @@ exports.createRazorpayOrder = async (amount) => {
 }
 
 /**
- * @desc Verify Razorpay Signature
+ * @desc Verify Razorpay Signature and Create Order
  */
-exports.verifyPayment = async (orderId, paymentId, signature) => {
+exports.verifyPayment = async (orderId, paymentId, signature, userId, addressInfo) => {
     // 1. Ensure keys exist
     if (!orderId || !paymentId || !signature) {
         throw new ApiError(400, "Missing payment details");
     }
 
     // 2. Generate the expected signature
-    // Make sure process.env.RAZORPAY_SECRET matches your .env exactly!
     const secret = process.env.RAZORPAY_SECRET;
 
     const generated_signature = crypto
@@ -39,13 +40,60 @@ exports.verifyPayment = async (orderId, paymentId, signature) => {
         .update(orderId + "|" + paymentId)
         .digest("hex");
 
-    if (generated_signature === signature) {
-        return new ApiResponse(200, { verified: true }, "Payment Verified Successfully");
-    } else {
-        // Log this to your terminal to debug!
+    if (generated_signature !== signature) {
         console.log("Signature Mismatch!");
-        console.log("Generated:", generated_signature);
-        console.log("Received:", signature);
         throw new ApiError(400, "Invalid payment signature");
     }
+
+    // 3. Signature is valid! Now create the Order in MongoDB
+    // Fetch the user's cart
+    const cart = await Cart.findOne({ user: userId }).populate('items.product');
+    if (!cart || cart.items.length === 0) {
+        throw new ApiError(404, "Cart is empty");
+    }
+
+    // Calculate total price (server-side for security)
+    const totalPrice = cart.items.reduce((acc, item) => {
+        if (item.product) {
+            return acc + (item.product.price * item.quantity);
+        }
+        return acc;
+    }, 0);
+
+    // 4. Save to Order Model
+    const orderData = {
+        user: userId,
+        orderItems: cart.items
+            .filter(item => item.product) // Safety check
+            .map(item => ({
+                name: item.product.name,
+                qty: item.quantity,
+                image: item.product.image,
+                price: item.product.price,
+                product: item.product._id
+            })),
+        shippingAddress: addressInfo || {
+            address: "Default Address",
+            city: "Default City",
+            postalCode: "000000",
+            country: "India"
+        },
+        paymentMethod: "Razorpay",
+        paymentResult: {
+            razorpay_order_id: orderId,
+            razorpay_payment_id: paymentId,
+            razorpay_signature: signature
+        },
+        totalPrice: totalPrice,
+        isPaid: true,
+        paidAt: Date.now()
+    };
+
+    const order = await Order.create(orderData);
+
+    // 5. Clear the user's cart after successful order
+    cart.items = [];
+    await cart.save();
+
+    return new ApiResponse(201, order, "Order placed successfully");
 };
