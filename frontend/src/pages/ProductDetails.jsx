@@ -24,7 +24,7 @@ export const ProductDetails = () => {
       "A sleek, minimalist watch with a genuine leather strap. This timepiece combines classic elegance with modern functionality, making it perfect for both formal and casual settings. Crafted with a stainless steel case and scratch-resistant sapphire glass.",
     category: "Accessories",
     price: 120.0,
-    stock: true,
+    stock: 20,
     image:
       "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   };
@@ -74,9 +74,9 @@ export const ProductDetails = () => {
               </div>
               <div className="flex items-center gap-4">
                 <span
-                  className={`text-sm font-medium ${product.stock > 0 ? "text-accent" : "text-red-500"}`}
+                  className={`text-sm font-medium ${product.stock > 10 ? "text-accent" : "text-red-500"}`}
                 >
-                  {product.stock ? "In Stock" : "Out of Stock"}
+                  {product.stock <= 10 ? "Low Stock" : "In Stock"}
                 </span>
               </div>
             </div>
