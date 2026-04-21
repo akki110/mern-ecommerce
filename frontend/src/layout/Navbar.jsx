@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useCartData } from "../context/CartContext";
 import { ShoppingCart, Menu, X, ShoppingBag } from "lucide-react";
+import { useData } from "../context/AuthContext";
 
 export const Navbar = () => {
   const { cartItems } = useCartData();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated, logout } = useData();
 
   const navLinks = [
     { title: "Products", path: "/list" },
@@ -45,18 +47,31 @@ export const Navbar = () => {
             </Link>
           ))}
           <div className="h-4 w-[1px] bg-border mx-2"></div>
-          <Link
-            className="text-sm font-semibold text-text-main hover:text-primary transition-colors"
-            to="/login"
-          >
-            Login
-          </Link>
-          <Link
-            className="px-5 py-2.5 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-primary-hover transition-all shadow-lg shadow-primary/20 active:scale-95"
-            to="/register"
-          >
-            Join Now
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <button
+                onClick={logout}
+                className="px-5 py-2.5 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-primary-hover transition-all shadow-lg shadow-primary/20 active:scale-95"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                className="text-sm font-semibold text-text-main hover:text-primary transition-colors"
+                to="/login"
+              >
+                Login
+              </Link>
+              <Link
+                className="px-5 py-2.5 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-primary-hover transition-all shadow-lg shadow-primary/20 active:scale-95"
+                to="/register"
+              >
+                Join Now
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}

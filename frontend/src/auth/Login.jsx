@@ -6,6 +6,8 @@ import { useData } from "../context/AuthContext";
 export const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useData();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -15,8 +17,17 @@ export const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    // code here
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const res = await login(formData.email, formData.password);
+      if (res.success) {
+        navigate("/");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -98,10 +109,11 @@ export const Login = () => {
 
           <button
             type="submit"
-            className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2 active:scale-[0.98]"
+            disabled={isSubmitting}
+            className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Sign In
-            <ArrowRight className="w-5 h-5" />
+            {isSubmitting ? "Signing In..." : "Sign In"}
+            {!isSubmitting && <ArrowRight className="w-5 h-5" />}
           </button>
         </form>
 

@@ -1,35 +1,36 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useCartData } from "../context/CartContext";
+import { BASE_URL } from "../utils/constant";
 
 export const ProductCard = ({ item }) => {
   const { addToCart } = useCartData();
 
   return (
     <Link
-      to={`/product/${item.id}`}
+      to={`/product/${item._id}`}
       className="bg-surface rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow group"
     >
       <div className="relative w-full aspect-square bg-gray-50 rounded-md mb-4 overflow-hidden border border-border/50">
         <img
-          src={item.image}
+          src={`${BASE_URL}/upload/${item?.image}`}
           alt={item.name}
           className="w-full h-full object-cover rounded-md group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
         <div className="absolute px-2 py-0.5 top-3 right-3 bg-primary text-white text-[10px] font-bold uppercase tracking-wider rounded-sm shadow-md shadow-primary/20">
-          {item.category}
+          {item?.category}
         </div>
       </div>
       <h3 className="text-lg font-bold text-text-main mb-1 truncate">
-        {item.name}
+        {item?.name}
       </h3>
       <p className="text-sm text-text-muted mb-4 line-clamp-2 min-h-[40px]">
-        {item.description}
+        {item?.description}
       </p>
       <div className="flex justify-between items-center mt-auto">
         <span className="text-xl font-bold text-primary">
-          ₹{item.price.toLocaleString("en-IN")}
+          ₹{item?.price.toLocaleString("en-IN")}
         </span>
         <button
           onClick={(e) => {

@@ -2,15 +2,21 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
+const path = require('path');
 
 const app = express();
 
 // middleware
 app.use(cors());
 app.use(express.json());
-app.use(helmet());
+
+app.use(helmet({
+    crossOriginResourcePolicy: false,
+}));
+
 app.use(morgan('dev'));
-app.use('/uploads', express.static('uploads'));
+
+app.use('/upload', express.static(path.join(__dirname, 'uploads')));
 
 // routes
 app.use('/api/auth', require('./routes/auth.routes'));

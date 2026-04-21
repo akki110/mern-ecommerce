@@ -18,6 +18,8 @@ export const Signup = () => {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const { register } = useData();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -27,8 +29,23 @@ export const Signup = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    // code here
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const res = await register(
+        formData.name,
+        formData.email,
+        formData.password,
+      );
+
+      if (res && res.success) {
+        navigate("/login");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -135,9 +152,10 @@ export const Signup = () => {
 
           <button
             type="submit"
-            className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-lg shadow-primary/30 active:scale-[0.98] mt-2"
+            disabled={isSubmitting}
+            className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-lg shadow-primary/30 active:scale-[0.98] mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Create My Account
+            {isSubmitting ? "Creating Account..." : "Create My Account"}
           </button>
         </form>
 

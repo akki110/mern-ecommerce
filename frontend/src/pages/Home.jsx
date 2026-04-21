@@ -1,38 +1,38 @@
-import React from "react";
-import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { ProductCard } from "../components/ProductCard";
+import { useFetch } from "../hooks/useFetch";
+import { API_ENDPOINTS } from "../utils/constant";
+import { Loader } from "../components/Loader";
 
 export const Home = () => {
-  const featuredProducts = [
-    {
-      id: 1,
-      name: "Minimalist Leather Watch",
-      description: "A sleek, minimalist watch with a genuine leather strap.",
-      category: "Accessories",
-      price: 120.0,
-      image:
-        "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1170&auto=format&fit=crop",
-    },
-    {
-      id: 2,
-      name: "Noise Cancelling Headphones",
-      description: "Premium sound quality with active noise cancellation.",
-      category: "Electronics",
-      price: 250.0,
-      image:
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1170&auto=format&fit=crop",
-    },
-    {
-      id: 3,
-      name: "Premium Canvas Backpack",
-      description: "Durable and stylish backpack for everyday carry.",
-      category: "Bags",
-      price: 85.0,
-      image:
-        "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1170&auto=format&fit=crop",
-    },
-  ];
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const { loading, callApi } = useFetch();
+
+  const fetchFeaturedProducts = async () => {
+    try {
+      const res = await callApi({
+        endpoint: API_ENDPOINTS.PRODUCT,
+      });
+
+      if (res.success) {
+        setFeaturedProducts(res.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch featured products:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeaturedProducts();
+  }, []);
+
+  if (loading && featuredProducts.length === 0) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -43,7 +43,9 @@ export const Home = () => {
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {featuredProducts.map((item, i) => (
-              <ProductCard item={item} />
+              <React.Fragment key={i}>
+                <ProductCard item={item} />
+              </React.Fragment>
             ))}
           </div>
         </div>
