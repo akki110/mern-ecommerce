@@ -39,7 +39,7 @@ export const Home = () => {
       <div className="w-full flex justify-center items-start p-10">
         <div className="w-11/12 max-w-7xl">
           <h1 className="text-3xl font-bold text-text-main mb-6">
-            Featured Products
+            <span className="text-primary">Featured</span> Products
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {featuredProducts.map((item, i) => (

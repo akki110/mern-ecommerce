@@ -55,8 +55,8 @@ export const Cart = () => {
                   address: "123 Test Street",
                   city: "Mumbai",
                   postalCode: "400001",
-                  country: "India"
-                }
+                  country: "India",
+                },
               },
             });
             console.log("Verify Response:", verify); // Debugging
@@ -116,7 +116,7 @@ export const Cart = () => {
     <div className="w-full bg-background min-h-screen py-12">
       <div className="w-11/12 max-w-7xl mx-auto">
         <h2 className="text-3xl font-bold text-text-main mb-10 flex items-center gap-3">
-          Your Shopping Cart
+          <span className="text-primary">Your Shopping</span> Cart
           <span className="text-sm font-medium text-text-muted bg-border/50 px-3 py-1 rounded-full">
             {cartItems.length} {cartItems.length === 1 ? "Item" : "Items"}
           </span>

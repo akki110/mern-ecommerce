@@ -47,7 +47,9 @@ export const Listing = () => {
   return (
     <div className="w-full flex justify-center items-start p-10 min-h-screen bg-background">
       <div className="w-11/12 max-w-7xl">
-        <h2 className="text-3xl font-bold text-text-main mb-6">All Products</h2>
+        <h2 className="text-3xl font-bold text-text-main mb-6">
+          <span className="text-primary">All</span> Products
+        </h2>
 
         {/* Search and Sorting */}
         <div className="w-full flex flex-col md:flex-row items-center justify-between gap-4 mb-8">

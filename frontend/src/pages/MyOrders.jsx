@@ -141,7 +141,7 @@ export const MyOrders = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
           <div>
             <h1 className="text-3xl font-bold text-text-main mb-2">
-              My Order History
+              <span className="text-primary">My Order</span> History
             </h1>
             <p className="text-text-muted">
               Track and manage your recent purchases
