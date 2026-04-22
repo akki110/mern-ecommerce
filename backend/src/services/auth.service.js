@@ -31,7 +31,10 @@ exports.register = async (name, email, password) => {
     // Remove password from response
     user.password = undefined;
 
-    return new ApiResponse(201, { user, cart }, "User registered successfully");
+    // Generate token so the user is logged in immediately
+    const token = generateToken(user);
+
+    return new ApiResponse(201, { user, cart, token }, "User registered successfully");
 };
 
 /**

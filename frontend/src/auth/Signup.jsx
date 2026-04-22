@@ -41,7 +41,7 @@ export const Signup = () => {
       );
 
       if (res && res.success) {
-        navigate("/login");
+        navigate("/cart");
       }
     } finally {
       setIsSubmitting(false);

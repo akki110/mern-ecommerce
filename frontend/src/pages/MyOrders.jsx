@@ -170,7 +170,7 @@ export const MyOrders = () => {
                         Order ID
                       </p>
                       <p className="text-sm font-bold text-text-main">
-                        {order._id}
+                        {order._id.slice(0, 8)}
                       </p>
                     </div>
                     <div>

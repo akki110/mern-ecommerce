@@ -20,6 +20,35 @@ export const CartContext = ({ children }) => {
   const fetchBackendCart = async () => {
     if (isAuthenticated) {
       try {
+        // 1. Sync Guest Cart to Backend FIRST
+        const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+        if (localCart.length > 0) {
+          console.log("CartContext: Found guest items to sync:", localCart);
+          try {
+            await Promise.all(
+              localCart.map((item) => {
+                // Determine ID and quantity from possible property names
+                const pId = item._id || item.id || item.productId;
+                const pQty = item.quantity || item.qty || 1;
+                
+                if (!pId) return Promise.resolve(); // Skip invalid items
+
+                return callApi({
+                  method: "POST",
+                  endpoint: `${API_ENDPOINTS.CART}/add`,
+                  body: { productId: pId, quantity: pQty },
+                });
+              }),
+            );
+            localStorage.removeItem("cart");
+            console.log("CartContext: Sync completed successfully");
+            toast.success("Guest items added to your account");
+          } catch (syncErr) {
+            console.error("CartContext: Sync failed", syncErr);
+          }
+        }
+
+        // 2. Fetch the updated cart from Backend
         const res = await callApi({ endpoint: API_ENDPOINTS.CART });
 
         if (res.success && res.data.items) {
@@ -34,7 +63,7 @@ export const CartContext = ({ children }) => {
           setCartItems(formattedItems);
         }
       } catch (error) {
-        console.error("Failed to fetch cart:", error.message);
+        console.error("Failed to sync/fetch cart:", error.message);
       }
     }
   };
@@ -42,12 +71,11 @@ export const CartContext = ({ children }) => {
   useEffect(() => {
     fetchBackendCart();
   }, [isAuthenticated]);
-  // Sync cart with Local Storage (for guest users)
+
+  // Handle local storage persistence for guests
   useEffect(() => {
     if (!isAuthenticated) {
       localStorage.setItem("cart", JSON.stringify(cartItems));
-    } else {
-      localStorage.removeItem("cart");
     }
   }, [cartItems, isAuthenticated]);
 
@@ -67,7 +95,9 @@ export const CartContext = ({ children }) => {
     } else {
       setCartItems((prev) => {
         const productId = product._id || product.id;
-        const existingItem = prev.find((item) => (item._id || item.id) === productId);
+        const existingItem = prev.find(
+          (item) => (item._id || item.id) === productId,
+        );
         if (existingItem) {
           return prev.map((item) =>
             (item._id || item.id) === productId
@@ -92,7 +122,9 @@ export const CartContext = ({ children }) => {
         toast.error("Failed to sync cart to database");
       }
     } else {
-      setCartItems((prev) => prev.filter((item) => (item._id || item.id) !== productId));
+      setCartItems((prev) =>
+        prev.filter((item) => (item._id || item.id) !== productId),
+      );
       toast.success("Item removed from cart");
     }
   };
@@ -109,7 +141,9 @@ export const CartContext = ({ children }) => {
     } else {
       setCartItems((prev) =>
         prev.map((item) =>
-          (item._id || item.id) === productId ? { ...item, quantity: newQty } : item,
+          (item._id || item.id) === productId
+            ? { ...item, quantity: newQty }
+            : item,
         ),
       );
     }

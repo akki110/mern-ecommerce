@@ -15,11 +15,15 @@ import { Loader } from "../components/Loader";
 
 export const ProductDetails = () => {
   const { id } = useParams();
-  const [quantity, setQuantity] = useState(1);
-  const { addToCart } = useCartData();
+  const { cartItems, addToCart, updateQuantity, removeFromCart } =
+    useCartData();
   const [product, setProduct] = useState(null);
 
   const { loading, callApi } = useFetch();
+
+  // Find if this product is already in the cart
+  const cartItem = cartItems.find((ci) => (ci._id || ci.id) === id);
+  const cartQuantity = cartItem ? cartItem.quantity : 0;
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -39,9 +43,23 @@ export const ProductDetails = () => {
     }
   }, [id, callApi]);
 
-  const handleCart = () => {
+  const handleIncrement = () => {
     if (product) {
-      addToCart(product, quantity);
+      if (cartQuantity === 0) {
+        addToCart(product, 1);
+      } else {
+        updateQuantity(product._id, cartQuantity + 1);
+      }
+    }
+  };
+
+  const handleDecrement = () => {
+    if (product && cartQuantity > 0) {
+      if (cartQuantity === 1) {
+        removeFromCart(product._id);
+      } else {
+        updateQuantity(product._id, cartQuantity - 1);
+      }
     }
   };
 
@@ -124,19 +142,17 @@ export const ProductDetails = () => {
                   </label>
                   <div className="flex items-center w-fit border border-border rounded-lg bg-background p-1">
                     <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="p-2 hover:bg-surface rounded-md transition-colors text-text-main"
+                      onClick={handleDecrement}
+                      disabled={cartQuantity === 0}
+                      className="p-2 hover:bg-surface rounded-md transition-colors text-text-main disabled:opacity-30 disabled:cursor-not-allowed"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
-                    <input
-                      type="number"
-                      value={quantity}
-                      readOnly
-                      className="w-12 text-center font-bold text-text-main bg-transparent focus:outline-none"
-                    />
+                    <div className="w-12 text-center font-bold text-text-main">
+                      {cartQuantity || 1}
+                    </div>
                     <button
-                      onClick={() => setQuantity(quantity + 1)}
+                      onClick={handleIncrement}
                       className="p-2 hover:bg-surface rounded-md transition-colors text-text-main"
                     >
                       <Plus className="w-4 h-4" />
@@ -146,13 +162,23 @@ export const ProductDetails = () => {
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                  <button
-                    onClick={handleCart}
-                    className="flex-1 flex items-center justify-center gap-3 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-lg shadow-primary/30"
-                  >
-                    <ShoppingCart className="w-5 h-5" />
-                    Add to Cart
-                  </button>
+                  {cartQuantity === 0 ? (
+                    <button
+                      onClick={handleIncrement}
+                      className="flex-1 flex items-center justify-center gap-3 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-lg shadow-primary/30"
+                    >
+                      <ShoppingCart className="w-5 h-5" />
+                      Add to Cart
+                    </button>
+                  ) : (
+                    <Link
+                      to="/cart"
+                      className="flex-1 flex items-center justify-center gap-3 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary/30"
+                    >
+                      <ShoppingCart className="w-5 h-5" />
+                      View in Cart ({cartQuantity})
+                    </Link>
+                  )}
                 </div>
 
                 {/* Features/Trust Badges */}
