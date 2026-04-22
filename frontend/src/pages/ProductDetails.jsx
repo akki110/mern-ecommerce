@@ -108,16 +108,25 @@ export const ProductDetails = () => {
 
               {/* Right Column: Info & Actions Section */}
               <div className="lg:col-span-5 flex flex-col">
-                <div className="mb-2 flex items-center gap-4">
-                  <div className="inline-block px-3 py-1 text-xs font-bold tracking-wider text-primary bg-primary/10 rounded-full uppercase">
-                    {product.category}
+                <div className="flex items-center justify-between">
+                  <div className="mb-2 flex items-center gap-4">
+                    <div className="inline-block px-3 py-1 text-xs font-bold tracking-wider text-primary bg-primary/10 rounded-full uppercase">
+                      {product.category}
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span
+                        className={`text-sm font-medium ${product.countInStock > 10 ? "text-accent" : "text-red-500"}`}
+                      >
+                        {product.countInStock <= 10 ? "Low Stock" : "In Stock"}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span
-                      className={`text-sm font-medium ${product.countInStock > 10 ? "text-accent" : "text-red-500"}`}
+                  <div>
+                    <p
+                      className={`${product.isSale ? "text-sm font-medium text-red-500 bg-red-500/10 px-3 py-1 rounded-full" : ""}`}
                     >
-                      {product.countInStock <= 10 ? "Low Stock" : "In Stock"}
-                    </span>
+                      {product.isSale ? "On Sale" : ""}
+                    </p>
                   </div>
                 </div>
 

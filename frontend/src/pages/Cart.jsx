@@ -76,7 +76,7 @@ export const Cart = () => {
           email: user.email,
         },
         theme: {
-          color: "#000000",
+          color: "#4f46e5",
         },
       };
       const razor = new window.Razorpay(options);
