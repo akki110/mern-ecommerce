@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import {
   Package,
   Clock,
@@ -8,51 +9,80 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useFetch } from "../hooks/useFetch";
+import { useData } from "../context/AuthContext";
+import { API_ENDPOINTS, BASE_URL } from "../utils/constant";
 
 export const MyOrders = () => {
-  // Mock data for orders
-  const orders = [
-    {
-      id: "ORD-982345",
-      date: "Oct 15, 2023",
-      status: "Delivered",
-      total: 370.0,
-      items: [
-        {
-          id: 1,
-          name: "Minimalist Leather Watch",
-          price: 120.0,
-          quantity: 1,
-          image:
-            "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1170&auto=format&fit=crop",
-        },
-        {
-          id: 2,
-          name: "Noise Cancelling Headphones",
-          price: 250.0,
-          quantity: 1,
-          image:
-            "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1170&auto=format&fit=crop",
-        },
-      ],
-    },
-    {
-      id: "ORD-771209",
-      date: "Oct 18, 2023",
-      status: "Processing",
-      total: 85.0,
-      items: [
-        {
-          id: 3,
-          name: "Premium Canvas Backpack",
-          price: 85.0,
-          quantity: 1,
-          image:
-            "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1170&auto=format&fit=crop",
-        },
-      ],
-    },
-  ];
+  const [orders, setOrders] = useState([]);
+  const { callApi, loading: isLoading } = useFetch();
+  const { user, isAuthenticated } = useData();
+
+  // fetch user orders
+
+  const fetchUserOrders = async () => {
+    if (isAuthenticated) {
+      try {
+        const orders = await callApi({
+          endpoint: `${API_ENDPOINTS.ORDER}/myorders`,
+        });
+        if (orders.success) {
+          setOrders(orders.data);
+          console.log(orders.data);
+        }
+      } catch (error) {
+        toast.error("Failed to fetch orders");
+        console.log(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchUserOrders();
+  }, [isAuthenticated]);
+
+  // const orders = [
+  //   {
+  //     id: "ORD-982345",
+  //     date: "Oct 15, 2023",
+  //     status: "Delivered",
+  //     total: 370.0,
+  //     items: [
+  //       {
+  //         id: 1,
+  //         name: "Minimalist Leather Watch",
+  //         price: 120.0,
+  //         quantity: 1,
+  //         image:
+  //           "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1170&auto=format&fit=crop",
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Noise Cancelling Headphones",
+  //         price: 250.0,
+  //         quantity: 1,
+  //         image:
+  //           "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1170&auto=format&fit=crop",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: "ORD-771209",
+  //     date: "Oct 18, 2023",
+  //     status: "Processing",
+  //     total: 85.0,
+  //     items: [
+  //       {
+  //         id: 3,
+  //         name: "Premium Canvas Backpack",
+  //         price: 85.0,
+  //         quantity: 1,
+  //         image:
+  //           "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1170&auto=format&fit=crop",
+  //       },
+  //     ],
+  //   },
+  // ];
 
   const getStatusStyles = (status) => {
     switch (status) {
@@ -127,10 +157,9 @@ export const MyOrders = () => {
 
         <div className="flex flex-col gap-8">
           {orders.map((order) => {
-            const styles = getStatusStyles(order.status);
             return (
               <div
-                key={order.id}
+                key={order._id}
                 className="bg-surface rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-md transition-all group"
               >
                 {/* Order Header */}
@@ -141,7 +170,7 @@ export const MyOrders = () => {
                         Order ID
                       </p>
                       <p className="text-sm font-bold text-text-main">
-                        {order.id}
+                        {order._id}
                       </p>
                     </div>
                     <div>
@@ -149,7 +178,7 @@ export const MyOrders = () => {
                         Date Placed
                       </p>
                       <p className="text-sm font-bold text-text-main">
-                        {order.date}
+                        {order.createdAt.split("T")[0]}
                       </p>
                     </div>
                     <div>
@@ -157,27 +186,26 @@ export const MyOrders = () => {
                         Total Amount
                       </p>
                       <p className="text-sm font-bold text-primary">
-                        ₹{order.total.toLocaleString("en-IN")}
+                        ₹{order.totalPrice.toLocaleString("en-IN")}
                       </p>
                     </div>
                   </div>
 
                   <div
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${styles.bg} ${styles.text} font-bold text-xs`}
+                    className={`flex justify-center items-center gap-2 px-3 py-1.5 rounded-full ${order.isPaid ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"} font-bold text-xs`}
                   >
-                    {styles.icon}
-                    {order.status}
+                    {order.isPaid ? "Paid" : "Not Paid"}
                   </div>
                 </div>
 
                 {/* Items List */}
                 <div className="p-6">
                   <div className="flex flex-col gap-6">
-                    {order.items.map((item) => (
-                      <div key={item.id} className="flex items-center gap-4">
+                    {order.orderItems.map((item) => (
+                      <div key={item._id} className="flex items-center gap-4">
                         <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden border border-border flex-shrink-0">
                           <img
-                            src={item.image}
+                            src={`${BASE_URL}/upload/${item.image}`}
                             alt={item.name}
                             className="w-full h-full object-cover"
                           />
@@ -190,7 +218,7 @@ export const MyOrders = () => {
                             <p className="text-xs text-text-muted">
                               Quantity:{" "}
                               <span className="font-bold text-text-main">
-                                {item.quantity}
+                                {item.qty}
                               </span>
                             </p>
                             <span className="w-1 h-1 bg-border rounded-full"></span>
@@ -203,7 +231,7 @@ export const MyOrders = () => {
                           </div>
                         </div>
                         <Link
-                          to={`/product/${item.id}`}
+                          to={`/product/${item.product}`}
                           className="p-2 hover:bg-gray-100 rounded-full transition-colors text-text-muted hover:text-primary"
                         >
                           <ChevronRight className="w-5 h-5" />
