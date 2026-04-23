@@ -35,12 +35,19 @@ export const AuthContext = ({ children }) => {
     }
   };
 
-  const register = async (name, email, password) => {
+  const register = async (
+    firstName,
+    lastName,
+    email,
+    number,
+    country,
+    password,
+  ) => {
     try {
       const data = await callApi({
         method: "POST",
         endpoint: `${API_ENDPOINTS.AUTH}/register`,
-        body: { name, email, password },
+        body: { firstName, lastName, email, number, country, password },
       });
       return handleAuthSuccess(data, "Account created successfully!");
     } catch (error) {

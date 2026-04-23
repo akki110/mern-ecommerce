@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useCartData } from "../context/CartContext";
 import { BASE_URL } from "../utils/constant";
-import { Plus, Minus } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 
 export const ProductCard = ({ item }) => {
-  const { cartItems, addToCart, updateQuantity, removeFromCart } = useCartData();
+  const { cartItems, addToCart, updateQuantity, removeFromCart } =
+    useCartData();
+  const [isLiked, setIsLiked] = useState(false);
 
   // Find if this product is already in the cart
   const cartItem = cartItems.find((ci) => (ci._id || ci.id) === item._id);
@@ -31,58 +33,83 @@ export const ProductCard = ({ item }) => {
     }
   };
 
+  const toggleLike = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsLiked(!isLiked);
+  };
+
   return (
     <Link
       to={`/product/${item._id}`}
-      className="bg-surface rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow group flex flex-col"
+      className="bg-transparent rounded-sm border border-gray-500 p-3 hover:shadow-xl transition-all duration-300 group flex flex-col relative overflow-hidden h-full"
     >
-      <div className="relative w-full aspect-square bg-gray-50 rounded-md mb-4 overflow-hidden border border-border/50">
+      {/* Sale Badge */}
+      {item.isSale && (
+        <div className="absolute top-4 right-4 z-10 w-10 h-10 bg-green-600 rounded-full flex flex-col items-center justify-center text-white leading-tight shadow-lg shadow-[#00B67A]/20">
+          <span className="text-[11px] font-bold">20%</span>
+          <span className="text-[10px]">off</span>
+        </div>
+      )}
+      {/* Product Image */}
+      <div className="relative w-full flex items-center justify-center overflow-hidden mb-5">
         <img
-          src={`${BASE_URL}/upload/${item?.image}`}
+          src={`${BASE_URL}/upload/${item?.images?.[0] || item?.image}`}
           alt={item.name}
-          className="w-full h-full object-cover rounded-md group-hover:scale-105 transition-transform duration-300"
+          className="max-w-full h-[200px] object-cover group-hover:scale-110 transition-transform duration-500"
           loading="lazy"
         />
-        <div className="absolute px-2 py-0.5 top-3 right-3 bg-primary text-white text-[10px] font-bold uppercase tracking-wider rounded-sm shadow-md shadow-primary/20">
-          {item?.category}
-        </div>
       </div>
-      <h3 className="text-lg font-bold text-text-main mb-1 truncate">
-        {item?.name}
-      </h3>
-      <p className="text-sm text-text-muted mb-4 line-clamp-2 min-h-[40px]">
-        {item?.description}
-      </p>
-      <div className="flex justify-between items-center mt-auto">
-        <span className="text-xl font-bold text-primary">
-          ₹{item?.price.toLocaleString("en-IN")}
+      {/* Brand & Wishlist Row */}
+      <div className="flex items-start justify-between mb-2">
+        <span className="text-xs  text-gray-400 tracking-wide uppercase">
+          {item.brand || "Fresho"}
         </span>
-
-        {quantity === 0 ? (
-          <button
-            onClick={handleIncrement}
-            className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover transition-all shadow-md shadow-primary/20 active:scale-95"
-          >
-            Add to Cart
-          </button>
-        ) : (
-          <div className="flex items-center bg-gray-100 rounded-lg p-1 border border-border">
+        <button
+          onClick={toggleLike}
+          className="text-gray-300 hover:text-red-500 transition-colors p-1"
+        >
+          <Heart
+            className={`w-5 h-5 ${isLiked ? "fill-red-500 text-red-500" : ""}`}
+          />
+        </button>
+      </div>
+      {/* Product Info Row */}
+      <div className="flex items-baseline justify-between gap-2 mb-3">
+        <h3 className="text-[15px] font-normal text-[#191919] leading-tight line-clamp-2 flex-1">
+          {item.name}
+        </h3>
+        <span className="text-md font-bold text-[#191919] shrink-0">
+          ${item.price}
+        </span>
+      </div>
+      s{/* Add to Cart / Quantity Control */}
+      <div className="mt-auto pt-2">
+        {quantity > 0 ? (
+          <div className="flex items-center border-2 border-[#191919] rounded-sm overflow-hidden">
             <button
               onClick={handleDecrement}
-              className="p-1.5 hover:bg-white rounded-md transition-colors text-primary"
+              className="px-4 py-3 bg-white hover:bg-gray-50 text-[#191919] transition-colors"
             >
-              <Minus className="w-3.5 h-3.5" />
+              <span className="text-lg font-bold">−</span>
             </button>
-            <span className="px-3 text-sm font-bold text-text-main min-w-[30px] text-center">
+            <span className="flex-1 text-center font-bold text-[15px] text-[#191919]">
               {quantity}
             </span>
             <button
               onClick={handleIncrement}
-              className="p-1.5 hover:bg-white rounded-md transition-colors text-primary"
+              className="px-4 py-3 bg-white hover:bg-gray-50 text-[#191919] transition-colors"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <span className="text-lg font-bold">+</span>
             </button>
           </div>
+        ) : (
+          <button
+            onClick={handleIncrement}
+            className="w-full py-2 border text-[15px] font-bold text-[#191919] bg-white hover:bg-[#191919] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            Add to cart
+          </button>
         )}
       </div>
     </Link>

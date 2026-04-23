@@ -7,10 +7,10 @@ const authService = require('../services/auth.service');
  * @access  Public
  */
 exports.registerUser = asyncHandler(async (req, res) => {
-    const { name, email, password } = req.body;
+    const { firstName, lastName, email, number, country, password } = req.body;
 
     // Validation is already handled by middleware, so we can jump straight to the service
-    const response = await authService.register(name, email, password);
+    const response = await authService.register(firstName, lastName, email, number, country, password);
 
     res.status(response.statusCode).json(response);
 });

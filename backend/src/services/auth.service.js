@@ -7,7 +7,7 @@ const { generateToken } = require('../utils/jwt');
 /**
  * @desc    Register a new user
  */
-exports.register = async (name, email, password) => {
+exports.register = async (firstName, lastName, email, number, country, password) => {
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
@@ -17,8 +17,11 @@ exports.register = async (name, email, password) => {
 
     // Create user
     const user = await User.create({
-        name,
+        firstName,
+        lastName,
         email,
+        number,
+        country,
         password,
         role: 'user'
     });

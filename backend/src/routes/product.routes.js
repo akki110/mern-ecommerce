@@ -12,8 +12,8 @@ router.get('/sale', productController.sale);
 router.get('/:id', productController.getById);
 
 // Admin Routes (Add auth(['admin']) later)
-router.post('/', upload.single('image'), validate(productSchema), productController.create);
-router.put('/:id', upload.single('image'), validate(productSchema), productController.update);
+router.post('/', upload.array('images', 5), validate(productSchema), productController.create);
+router.put('/:id', upload.array('images', 5), validate(productSchema), productController.update);
 router.delete('/:id', productController.delete);
 
 module.exports = router;

@@ -7,6 +7,10 @@ const productSchema = new mongoose.Schema({
     trim: true,
     index: true,
   },
+  brand: {
+    type: String,
+    trim: true,
+  },
   description: {
     type: String,
     required: [true, 'Please provide product description'],
@@ -15,15 +19,31 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Please provide product price'],
   },
+  discountPrice: {
+    type: Number,
+  },
+  discountPercentage: {
+    type: Number,
+  },
+  weight: {
+    type: String,
+  },
   category: {
     type: String,
     required: [true, 'Please provide product category'],
-    enum: ['electronics', 'clothing', 'accessories', 'home', 'beauty'],
+    enum: [
+      'fruits-and-vegetables',
+      'dairy-and-bakery',
+      'staples',
+      'snacks-and-branded-foods',
+      'beverages',
+      'home-and-kitchen'
+    ],
     index: true,
   },
-  image: {
-    type: String,
-    required: [true, 'Please provide product image URL'],
+  images: {
+    type: [String],
+    required: [true, 'Please provide product image URLs'],
   },
   countInStock: {
     type: Number,

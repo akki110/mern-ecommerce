@@ -14,20 +14,29 @@ exports.createProduct = async (productData) => {
  * @desc Get All Products with Filtering, Search, and Sorting
  */
 exports.getAllProducts = async (filters = {}) => {
-    const { category, minPrice, maxPrice, sort, isSale, q } = filters;
+    const { category, minPrice, maxPrice, sort, isSale, q, brand, inStock } = filters;
 
     let query = {};
 
-    // Search logic (Category or Name)
+    // Search logic (Category, Name, or Brand)
     if (q) {
         query.$or = [
             { name: { $regex: q, $options: 'i' } },
+            { brand: { $regex: q, $options: 'i' } },
             { category: { $regex: q, $options: 'i' } },
         ];
     }
 
     // Category filter
     if (category) query.category = category;
+
+    // Brand filter
+    if (brand) query.brand = brand;
+
+    // Availability filter
+    if (inStock === 'true') {
+        query.countInStock = { $gt: 0 };
+    }
 
     // Sale filter
     if (isSale === 'true') query.isSale = true;
@@ -44,6 +53,8 @@ exports.getAllProducts = async (filters = {}) => {
     // Sorting logic
     if (sort === 'oldest') {
         mongooseQuery = mongooseQuery.sort({ createdAt: 1 });
+    } else if (sort === 'newest') {
+        mongooseQuery = mongooseQuery.sort({ createdAt: -1 });
     } else if (sort === 'price-low') {
         mongooseQuery = mongooseQuery.sort({ price: 1 });
     } else if (sort === 'price-high') {
@@ -97,6 +108,7 @@ exports.searchProduct = async (searchQuery) => {
     const products = await Product.find({
         $or: [
             { name: { $regex: searchQuery, $options: 'i' } },
+            { brand: { $regex: searchQuery, $options: 'i' } },
             { category: { $regex: searchQuery, $options: 'i' } }
         ]
     });

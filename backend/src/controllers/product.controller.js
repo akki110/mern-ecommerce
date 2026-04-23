@@ -7,9 +7,16 @@ const productService = require('../services/product.service');
  * @access Private 
  */
 exports.create = asyncHandler(async (req, res) => {
+    let images = [];
+    if (req.files && req.files.length > 0) {
+        images = req.files.map(file => file.filename);
+    } else if (req.body.images) {
+        images = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
+    }
+
     const productData = {
         ...req.body,
-        image: req.file ? req.file.filename : req.body.image
+        images
     };
     const response = await productService.createProduct(productData);
     res.status(response.statusCode).json(response);
@@ -42,7 +49,10 @@ exports.getById = asyncHandler(async (req, res) => {
  */
 exports.update = asyncHandler(async (req, res) => {
     const updateData = { ...req.body };
-    if (req.file) updateData.image = req.file.filename;
+    
+    if (req.files && req.files.length > 0) {
+        updateData.images = req.files.map(file => file.filename);
+    }
 
     const response = await productService.updateProduct(req.params.id, updateData);
     res.status(response.statusCode).json(response);

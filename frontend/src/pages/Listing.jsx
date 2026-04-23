@@ -4,18 +4,30 @@ import { useFetch } from "../hooks/useFetch";
 import { API_ENDPOINTS } from "../utils/constant";
 import { Loader } from "../components/Loader";
 
+import { useSearchParams } from "react-router-dom";
+
 export const Listing = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchTerm = searchParams.get("q") || "";
+  const category = searchParams.get("category") || "";
+  const sortParam = searchParams.get("sort") || "";
+  
+  const [sortBy, setSortBy] = useState(sortParam);
   const [products, setProducts] = useState(null);
 
   const { loading, callApi } = useFetch();
 
-  // Fetch products with search and sorting
-  const fetchProducts = async (search = "", sort = "") => {
+  // Sync sortBy state with URL param
+  useEffect(() => {
+    setSortBy(sortParam);
+  }, [sortParam]);
+
+  // Fetch products with search, category and sorting
+  const fetchProducts = async (search = "", cat = "", sort = "") => {
     try {
       let params = new URLSearchParams();
       if (search) params.append("q", search);
+      if (cat) params.append("category", cat);
 
       if (sort === "sale") {
         params.append("isSale", "true");
@@ -35,14 +47,10 @@ export const Listing = () => {
     }
   };
 
-  // Combined useEffect for Search and Sort
+  // Trigger fetch on Search, Category or Sort change
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      fetchProducts(searchTerm, sortBy);
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, sortBy]);
+    fetchProducts(searchTerm, category, sortBy);
+  }, [searchTerm, category, sortBy]);
 
   return (
     <div className="w-full flex justify-center items-start p-10 min-h-screen bg-background">
@@ -51,16 +59,13 @@ export const Listing = () => {
           <span className="text-primary">All</span> Products
         </h2>
 
-        {/* Search and Sorting */}
-        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-          <div className="w-full md:w-3/4">
-            <input
-              type="text"
-              className="w-full px-5 py-3.5 bg-surface border border-border rounded-xl focus:outline-none focus:border-primary transition-all shadow-sm text-text-main placeholder:text-text-muted/50"
-              placeholder="Search by category or product name..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        {/* Sorting and Filters Header */}
+        <div className="w-full flex items-center justify-between mb-8 border-b border-border pb-4">
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-text-muted">
+              {products ? products.length : 0} items found
+              {category && ` in ${category.replace(/-/g, " ")}`}
+            </p>
           </div>
           <div className="w-full md:w-1/4">
             <select

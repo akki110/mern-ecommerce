@@ -5,7 +5,6 @@ import { useData } from "../context/AuthContext";
 
 export const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
   const { login } = useData();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -31,100 +30,74 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-[90vh] flex items-center justify-center bg-background px-4 py-12">
-      <div className="w-full max-w-md bg-surface p-8 rounded-md border border-border shadow-2xl shadow-primary/5">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-extrabold text-text-main mb-2">
-            Welcome Back
-          </h2>
-          <p className="text-text-muted">
-            Enter your credentials to access your account
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email Field */}
-          <div>
-            <label className="block text-sm font-bold text-text-main mb-2 ml-1">
-              Email Address
-            </label>
-            <div className="relative group">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted group-focus-within:text-primary transition-colors" />
-              <input
-                type="email"
-                required
-                name="email"
-                className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-sm focus:outline-none focus:border-primary transition-all text-text-main placeholder:text-text-muted/50"
-                placeholder="name@example.com"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
+    <div className="min-h-[90vh] flex items-center justify-center ">
+      <div className="w-10/12 bg-white rounded-sm flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md p-5">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-semibold text-text-main mb-2">
+              Login
+            </h2>
           </div>
 
-          {/* Password Field */}
-          <div>
-            <label className="block text-sm font-bold text-text-main mb-2 ml-1">
-              Password
-            </label>
-            <div className="relative group">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted group-focus-within:text-primary transition-colors" />
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                name="password"
-                className="w-full pl-12 pr-12 py-3.5 bg-background border border-border rounded-sm focus:outline-none focus:border-primary transition-all text-text-main placeholder:text-text-muted/50"
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={handleChange}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-main"
-              >
-                {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
-              </button>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
+            <div>
+              <div className="relative group">
+                <input
+                  type="email"
+                  required
+                  name="email"
+                  className="w-full pl-4 pr-12 py-3.5 bg-background border-2  focus:outline-none focus:border-primary transition-all text-text-main placeholder:text-gray-500"
+                  placeholder="Email address"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Remember Me */}
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="remember"
-              className="w-4 h-4 text-primary border-border rounded focus:ring-primary/20"
-            />
-            <label
-              htmlFor="remember"
-              className="ml-2 text-sm text-text-muted cursor-pointer select-none"
+            {/* Password Field */}
+            <div>
+              <div className="relative group">
+                <input
+                  type="password"
+                  required
+                  name="password"
+                  className="w-full pl-4 pr-12 py-3.5 bg-background border-2  focus:outline-none focus:border-primary transition-all text-text-main placeholder:text-gray-500"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            {/* Remember Me */}
+            <div className="flex items-center justify-end">
+              <Link to={"/"} className="text-indigo-500 font-semibold">
+                Forgot Password ?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-4 bg-indigo-500 text-white font-semibold rounded-sm uppercase hover:bg-indigo-600 transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Keep me logged in
-            </label>
+              {isSubmitting ? "Signing In..." : "Sign In"}
+              {!isSubmitting && <ArrowRight className="w-5 h-5" />}
+            </button>
+          </form>
+
+          <div className="my-8 flex justify-center">
+            <Link
+              to="/register"
+              className="font-semibold text-indigo-500 hover:underline underline-offset-4"
+            >
+              Sign Up
+            </Link>
           </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "Signing In..." : "Sign In"}
-            {!isSubmitting && <ArrowRight className="w-5 h-5" />}
-          </button>
-        </form>
-
-        <div className="mt-8 text-center text-sm text-text-muted">
-          Don't have an account?{" "}
-          <Link
-            to="/register"
-            className="font-bold text-primary hover:underline underline-offset-4"
-          >
-            Create an account
-          </Link>
+          <p className="text-gray-400 text-sm">
+            Protected and subject to the User Agreement and Privacy Policy
+          </p>
         </div>
       </div>
     </div>
