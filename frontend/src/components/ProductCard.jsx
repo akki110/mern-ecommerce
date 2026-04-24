@@ -86,7 +86,7 @@ export const ProductCard = ({ item }) => {
       {/* Add to Cart / Quantity Control */}
       <div className="mt-auto pt-2">
         {quantity > 0 ? (
-          <div className="w-full h-10 border text-[15px] font-bold rounded-[5px] text-[#191919] bg-white flex items-center justify-center overflow-hidden">
+          <div className="w-full h-10 border text-[15px] font-bold  text-[#191919] bg-white flex items-center justify-center overflow-hidden">
             <button
               onClick={handleDecrement}
               className="h-full px-4 bg-white hover:bg-gray-50  text-[#191919] transition-colors border-r"
@@ -106,7 +106,7 @@ export const ProductCard = ({ item }) => {
         ) : (
           <button
             onClick={handleIncrement}
-            className="w-full h-10 border rounded-[5px] text-[15px] font-bold text-[#191919] bg-white hover:bg-[#191919] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+            className="w-full h-10 border  text-[15px] font-bold text-[#191919] bg-white hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
           >
             Add to cart
           </button>

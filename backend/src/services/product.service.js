@@ -14,7 +14,7 @@ exports.createProduct = async (productData) => {
  * @desc Get All Products with Filtering, Search, and Sorting
  */
 exports.getAllProducts = async (filters = {}) => {
-    const { category, minPrice, maxPrice, sort, isSale, q, brand, inStock } = filters;
+    const { category, minPrice, maxPrice, sort, isSale, q, brand, inStock, new: isNew } = filters;
 
     let query = {};
 
@@ -51,7 +51,9 @@ exports.getAllProducts = async (filters = {}) => {
     let mongooseQuery = Product.find(query);
 
     // Sorting logic
-    if (sort === 'oldest') {
+    if (isNew === 'true') {
+        mongooseQuery = mongooseQuery.sort({ createdAt: -1 }).limit(10);
+    } else if (sort === 'oldest') {
         mongooseQuery = mongooseQuery.sort({ createdAt: 1 });
     } else if (sort === 'newest') {
         mongooseQuery = mongooseQuery.sort({ createdAt: -1 });

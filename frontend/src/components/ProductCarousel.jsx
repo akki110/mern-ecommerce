@@ -34,19 +34,27 @@ const ProductCarousel = ({ title, data }) => {
     }
   };
 
+  const [isPaused, setIsPaused] = React.useState(false);
+
   // Auto-run in infinite loop every 5 seconds
   React.useEffect(() => {
+    if (isPaused) return;
+
     const interval = setInterval(() => {
       scroll("right");
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [data]);
+  }, [data, isPaused]);
 
   if (!data || data.length === 0) return null;
 
   return (
-    <div className="w-full">
+    <div
+      className="w-full"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-xl md:text-2xl font-bold text-[#191919]">
           {title}
@@ -54,13 +62,13 @@ const ProductCarousel = ({ title, data }) => {
         <div className="flex gap-2">
           <button
             onClick={() => scroll("left")}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-primary hover:border-primary transition-all border border-transparent hover:bg-gray-50"
+            className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-green-600"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-primary hover:border-primary transition-all border border-transparent hover:bg-gray-50"
+            className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-green-600"
           >
             <ArrowRight className="w-6 h-6" />
           </button>
