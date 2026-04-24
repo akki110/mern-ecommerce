@@ -11,6 +11,12 @@ const ApiResponse = require('../utils/ApiResponse');
 exports.createOrder = asyncHandler(async (req, res) => {
     const { amount } = req.body;
 
+    console.log("Create Order Request:", req.body);
+
+    if (!amount || isNaN(amount) || amount <= 0) {
+        throw new ApiError(400, "Invalid amount provided");
+    }
+
     const response = await paymentService.createRazorpayOrder(amount);
 
     return res.status(200).json(new ApiResponse(200, response, "Order Created Successfully"))

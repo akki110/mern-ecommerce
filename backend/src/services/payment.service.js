@@ -19,6 +19,7 @@ exports.createRazorpayOrder = async (amount) => {
         const order = await razorpay.orders.create(options);
         return order;
     } catch (error) {
+        console.error("Razorpay Order Creation Error:", error);
         throw new ApiError(500, "Failed to create Razorpay order");
     }
 }
@@ -68,7 +69,7 @@ exports.verifyPayment = async (orderId, paymentId, signature, userId, addressInf
             .map(item => ({
                 name: item.product.name,
                 qty: item.quantity,
-                image: item.product.image,
+                image: item.product.images?.[0] || item.product.image || "",
                 price: item.product.price,
                 product: item.product._id
             })),

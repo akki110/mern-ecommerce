@@ -133,7 +133,7 @@ export const Cart = () => {
                 {/* Product Image */}
                 <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gray-50 rounded-xl overflow-hidden border border-border flex-shrink-0">
                   <img
-                    src={`${BASE_URL}/upload/${item.image}`}
+                    src={`${BASE_URL}/upload/${item?.images?.[0] || item?.image}`}
                     alt={item.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
