@@ -3,6 +3,8 @@ import { ProductCard } from "../components/ProductCard";
 import { useFetch } from "../hooks/useFetch";
 import { API_ENDPOINTS } from "../utils/constant";
 import { Loader } from "../components/Loader";
+import { ChevronDown } from "lucide-react";
+import banner from "../../public/banner.png";
 
 import { useSearchParams } from "react-router-dom";
 
@@ -11,11 +13,31 @@ export const Listing = () => {
   const searchTerm = searchParams.get("q") || "";
   const category = searchParams.get("category") || "";
   const sortParam = searchParams.get("sort") || "";
-  
+
   const [sortBy, setSortBy] = useState(sortParam);
   const [products, setProducts] = useState(null);
+  const [dropdown, setDropdown] = useState(false);
 
   const { loading, callApi } = useFetch();
+
+  // sort dropdown
+  const handleSortChange = (value) => {
+    setSortBy(value);
+    setDropdown(false);
+  };
+
+  const getSortLabel = () => {
+    switch (sortBy) {
+      case "price-low":
+        return "Price: Low to High";
+      case "price-high":
+        return "Price: High to Low";
+      case "sale":
+        return "Sale";
+      default:
+        return "New In";
+    }
+  };
 
   // Sync sortBy state with URL param
   useEffect(() => {
@@ -53,33 +75,74 @@ export const Listing = () => {
   }, [searchTerm, category, sortBy]);
 
   return (
-    <div className="w-full flex justify-center items-start p-10 min-h-screen bg-background">
+    <div className="w-full flex flex-col justify-center items-center p-10 min-h-screen bg-background">
       <div className="w-11/12 max-w-7xl">
         <h2 className="text-3xl font-bold text-text-main mb-6">
           <span className="text-primary">All</span> Products
         </h2>
 
         {/* Sorting and Filters Header */}
-        <div className="w-full flex items-center justify-between mb-8 border-b border-border pb-4">
+        <div className="w-full flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <p className="text-sm text-text-muted">
-              {products ? products.length : 0} items found
+            <p className="text-sm text-gray-800 font-medium">
+              showing {products ? products.length : 0} of{" "}
+              {products ? products.length : 0} results
               {category && ` in ${category.replace(/-/g, " ")}`}
             </p>
           </div>
-          <div className="w-full md:w-1/4">
-            <select
-              className="w-full px-5 py-3.5 bg-surface border border-border rounded-xl focus:outline-none focus:border-primary transition-all shadow-sm text-text-main font-medium cursor-pointer"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+          <div className="relative">
+            {/* Sort Dropdown Button */}
+            <button
+              onClick={() => setDropdown(!dropdown)}
+              className="flex items-center gap-2 text-[15px] font-medium text-[#191919] hover:text-primary transition-colors"
             >
-              <option value="">Sort By (Default)</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="oldest">Oldest First</option>
-              <option value="sale">On Sale</option>
-            </select>
+              Sort By
+              <ChevronDown
+                className={`w-4 h-4 transition-transform ${dropdown ? "rotate-180" : ""}`}
+              />
+            </button>
+
+            {/* Dropdown Menu */}
+            {dropdown && (
+              <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-100 rounded-lg shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in duration-200">
+                <div className="flex flex-col">
+                  <button
+                    onClick={() => handleSortChange("")}
+                    className={`px-5 py-3.5 text-left text-[14px] hover:bg-gray-50 transition-colors border-b border-gray-200 ${sortBy === "" ? "text-primary font-semibold" : "text-[#191919]"}`}
+                  >
+                    New In
+                  </button>
+                  <button
+                    onClick={() => handleSortChange("price-low")}
+                    className={`px-5 py-3.5 text-left text-[14px] hover:bg-gray-50 transition-colors border-b border-gray-200 ${sortBy === "price-low" ? "text-primary font-semibold" : "text-[#191919]"}`}
+                  >
+                    Price: Low to High
+                  </button>
+                  <button
+                    onClick={() => handleSortChange("price-high")}
+                    className={`px-5 py-3.5 text-left text-[14px] hover:bg-gray-50 transition-colors border-b border-gray-200 ${sortBy === "price-high" ? "text-primary font-semibold" : "text-[#191919]"}`}
+                  >
+                    Price: High to Low
+                  </button>
+                  <button
+                    onClick={() => handleSortChange("sale")}
+                    className={`px-5 py-3.5 text-left text-[14px] hover:bg-gray-50 transition-colors ${sortBy === "sale" ? "text-primary font-semibold" : "text-[#191919]"}`}
+                  >
+                    Sale
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
+        </div>
+
+        {/* Banner */}
+        <div className="w-full mb-8">
+          <img
+            src={banner}
+            alt="Banner"
+            className="w-full h-48 object-cover border border-gray-100"
+          />
         </div>
 
         {loading ? (
@@ -87,7 +150,7 @@ export const Listing = () => {
             <Loader />
           </div>
         ) : products && products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 animate-in fade-in duration-500">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-in fade-in duration-500">
             {products.map((item) => (
               <ProductCard key={item._id} item={item} />
             ))}
@@ -99,6 +162,13 @@ export const Listing = () => {
             </p>
           </div>
         ) : null}
+      </div>
+
+      {/* Load More Button */}
+      <div className="mx-auto my-8 md:my-12">
+        <button className="bg-primary text-white hover:bg-primary-hover py-3 px-8 font-semibold tracking-wider rounded-sm">
+          Load More
+        </button>
       </div>
     </div>
   );

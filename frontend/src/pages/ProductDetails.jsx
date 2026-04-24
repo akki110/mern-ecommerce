@@ -146,7 +146,7 @@ export const ProductDetails = () => {
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
-                  className={`w-20 h-20 border rounded-sm p-2 overflow-hidden transition-all bg-white ${
+                  className={`w-20 h-20 border rounded-sm p-2 mb-0 lg:mb-2 mr-2 lg:mr-0 overflow-hidden transition-all bg-white ${
                     selectedImage === idx
                       ? "border-[#00B67A] ring-1 ring-[#00B67A]"
                       : "border-gray-100 hover:border-gray-300"
@@ -190,7 +190,7 @@ export const ProductDetails = () => {
               </h1>
               {product.weight && (
                 <p className="text-gray-500 font-medium text-lg">
-                  ({product.weight}gm)
+                  ({product.weight})
                 </p>
               )}
             </div>

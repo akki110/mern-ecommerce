@@ -42,7 +42,7 @@ export const ProductCard = ({ item }) => {
   return (
     <Link
       to={`/product/${item._id}`}
-      className="bg-transparent rounded-sm border border-gray-500 p-3 hover:shadow-xl transition-all duration-300 group flex flex-col relative overflow-hidden h-full"
+      className="bg-transparent  border-2 border-gray-200 p-5 group flex flex-col relative overflow-hidden h-full"
     >
       {/* Sale Badge */}
       {item.isSale && (
@@ -86,10 +86,10 @@ export const ProductCard = ({ item }) => {
       {/* Add to Cart / Quantity Control */}
       <div className="mt-auto pt-2">
         {quantity > 0 ? (
-          <div className="w-full h-10 border text-[15px] font-bold text-[#191919] bg-white flex items-center justify-center overflow-hidden">
+          <div className="w-full h-10 border text-[15px] font-bold rounded-[5px] text-[#191919] bg-white flex items-center justify-center overflow-hidden">
             <button
               onClick={handleDecrement}
-              className="h-full px-4 bg-white hover:bg-gray-50 text-[#191919] transition-colors border-r"
+              className="h-full px-4 bg-white hover:bg-gray-50  text-[#191919] transition-colors border-r"
             >
               <span className="text-lg font-bold">−</span>
             </button>
@@ -98,7 +98,7 @@ export const ProductCard = ({ item }) => {
             </span>
             <button
               onClick={handleIncrement}
-              className="h-full px-4 bg-white hover:bg-gray-50 text-[#191919] transition-colors border-l"
+              className="h-full px-4 bg-white hover:bg-gray-50  text-[#191919] transition-colors border-l"
             >
               <span className="text-lg font-bold">+</span>
             </button>
@@ -106,7 +106,7 @@ export const ProductCard = ({ item }) => {
         ) : (
           <button
             onClick={handleIncrement}
-            className="w-full h-10 border text-[15px] font-bold text-[#191919] bg-white hover:bg-[#191919] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+            className="w-full h-10 border rounded-[5px] text-[15px] font-bold text-[#191919] bg-white hover:bg-[#191919] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
           >
             Add to cart
           </button>

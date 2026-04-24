@@ -7,11 +7,25 @@ const ProductCarousel = ({ title, data }) => {
 
   const scroll = (direction) => {
     if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
-      // Calculate one item width (roughly 20% of container on large screens)
-      const itemWidth = clientWidth / 5;
-      const scrollTo =
-        direction === "left" ? scrollLeft - itemWidth : scrollLeft + itemWidth;
+      const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
+      const scrollAmount = clientWidth + 20;
+      let scrollTo;
+
+      if (direction === "left") {
+        // If at the very start, wrap to the end
+        if (scrollLeft <= 0) {
+          scrollTo = scrollWidth - clientWidth;
+        } else {
+          scrollTo = scrollLeft - scrollAmount;
+        }
+      } else {
+        // If at the very end (with a small buffer), wrap to the start
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          scrollTo = 0;
+        } else {
+          scrollTo = scrollLeft + scrollAmount;
+        }
+      }
 
       scrollRef.current.scrollTo({
         left: scrollTo,
@@ -20,10 +34,19 @@ const ProductCarousel = ({ title, data }) => {
     }
   };
 
+  // Auto-run in infinite loop every 5 seconds
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      scroll("right");
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [data]);
+
   if (!data || data.length === 0) return null;
 
   return (
-    <div className="w-full ">
+    <div className="w-full">
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-xl md:text-2xl font-bold text-[#191919]">
           {title}
@@ -31,13 +54,13 @@ const ProductCarousel = ({ title, data }) => {
         <div className="flex gap-2">
           <button
             onClick={() => scroll("left")}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-primary hover:border-primary transition-all"
+            className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-primary hover:border-primary transition-all border border-transparent hover:bg-gray-50"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-primary hover:border-primary transition-all"
+            className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-primary hover:border-primary transition-all border border-transparent hover:bg-gray-50"
           >
             <ArrowRight className="w-6 h-6" />
           </button>
@@ -46,12 +69,12 @@ const ProductCarousel = ({ title, data }) => {
 
       <div
         ref={scrollRef}
-        className="flex gap-5 overflow-x-auto no-scrollbar scroll-smooth"
+        className="flex gap-5 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory"
       >
         {data.map((item) => (
           <div
             key={item._id}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
+            className="flex-none w-full sm:w-[calc((100%-20px)/2)] md:w-[calc((100%-60px)/3)] lg:w-[calc((100%-80px)/4)] xl:w-[calc((100%-100px)/5)] snap-start"
           >
             <ProductCard item={item} />
           </div>
