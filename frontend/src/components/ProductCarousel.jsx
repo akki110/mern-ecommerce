@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { ProductCard } from "./ProductCard";
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const ProductCarousel = ({ title, data }) => {
   const scrollRef = useRef(null);

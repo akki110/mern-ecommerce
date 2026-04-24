@@ -83,13 +83,13 @@ export const ProductCard = ({ item }) => {
           ${item.price}
         </span>
       </div>
-      s{/* Add to Cart / Quantity Control */}
+      {/* Add to Cart / Quantity Control */}
       <div className="mt-auto pt-2">
         {quantity > 0 ? (
-          <div className="flex items-center border-2 border-[#191919] rounded-sm overflow-hidden">
+          <div className="w-full h-10 border text-[15px] font-bold text-[#191919] bg-white flex items-center justify-center overflow-hidden">
             <button
               onClick={handleDecrement}
-              className="px-4 py-3 bg-white hover:bg-gray-50 text-[#191919] transition-colors"
+              className="h-full px-4 bg-white hover:bg-gray-50 text-[#191919] transition-colors border-r"
             >
               <span className="text-lg font-bold">−</span>
             </button>
@@ -98,7 +98,7 @@ export const ProductCard = ({ item }) => {
             </span>
             <button
               onClick={handleIncrement}
-              className="px-4 py-3 bg-white hover:bg-gray-50 text-[#191919] transition-colors"
+              className="h-full px-4 bg-white hover:bg-gray-50 text-[#191919] transition-colors border-l"
             >
               <span className="text-lg font-bold">+</span>
             </button>
@@ -106,7 +106,7 @@ export const ProductCard = ({ item }) => {
         ) : (
           <button
             onClick={handleIncrement}
-            className="w-full py-2 border text-[15px] font-bold text-[#191919] bg-white hover:bg-[#191919] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+            className="w-full h-10 border text-[15px] font-bold text-[#191919] bg-white hover:bg-[#191919] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
           >
             Add to cart
           </button>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useData } from "../context/AuthContext";
+import { MessageCircle } from "lucide-react";
 
 export const Signup = () => {
   const [formData, setFormData] = useState({
@@ -45,7 +46,7 @@ export const Signup = () => {
   };
 
   return (
-    <div className="min-h-[90vh] flex items-center justify-center ">
+    <div className="min-h-[90vh] flex items-center justify-center relative">
       <div className="w-10/12 bg-white rounded-sm flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md p-5">
           <div className="text-center mb-10">
@@ -63,7 +64,7 @@ export const Signup = () => {
                     type="text"
                     required
                     name="firstName"
-                    className="w-full pl-4 pr-12 py-3.5 bg-background border  focus:outline-none focus:border-primary transition-all text-text-main placeholder:text-gray-500"
+                    className="w-full pl-4 pr-12 py-3.5 bg-background border-2  focus:outline-none focus:border-indigo-500 transition-all text-text-main placeholder:text-gray-500"
                     placeholder="First Name"
                     value={formData.firstName}
                     onChange={handleChange}
@@ -76,7 +77,7 @@ export const Signup = () => {
                     type="text"
                     required
                     name="lastName"
-                    className="w-full pl-4 pr-12 py-3.5 bg-background border  focus:outline-none focus:border-primary transition-all text-text-main placeholder:text-gray-500"
+                    className="w-full pl-4 pr-12 py-3.5 bg-background border-2  focus:outline-none focus:border-indigo-500 transition-all text-text-main placeholder:text-gray-500"
                     placeholder="Last Name"
                     value={formData.lastName}
                     onChange={handleChange}
@@ -92,7 +93,7 @@ export const Signup = () => {
                   type="email"
                   required
                   name="email"
-                  className="w-full pl-4 pr-12 py-3.5 bg-background border  focus:outline-none focus:border-primary transition-all text-text-main placeholder:text-gray-500"
+                  className="w-full pl-4 pr-12 py-3.5 bg-background border-2  focus:outline-none focus:border-indigo-500 transition-all text-text-main placeholder:text-gray-500"
                   placeholder="Email"
                   value={formData.email}
                   onChange={handleChange}
@@ -106,7 +107,7 @@ export const Signup = () => {
                 <select
                   name="country"
                   id="country"
-                  className="w-full pl-4 pr-12 py-3.5 bg-background border  focus:outline-none focus:border-primary transition-all text-text-main placeholder:text-gray-500"
+                  className="w-full pl-4 pr-12 py-3.5 bg-background border-2  focus:outline-none focus:border-indigo-500 transition-all text-text-main placeholder:text-gray-500"
                   value={formData.country}
                   onChange={handleChange}
                 >
@@ -125,7 +126,7 @@ export const Signup = () => {
                   type="text"
                   required
                   name="number"
-                  className="w-full pl-4 pr-12 py-3.5 bg-background border  focus:outline-none focus:border-primary transition-all text-text-main placeholder:text-gray-500"
+                  className="w-full pl-4 pr-12 py-3.5 bg-background border-2  focus:outline-none focus:border-indigo-500 transition-all text-text-main placeholder:text-gray-500"
                   placeholder="Number"
                   value={formData.number}
                   onChange={handleChange}
@@ -140,7 +141,7 @@ export const Signup = () => {
                   type="password"
                   required
                   name="password"
-                  className="w-full pl-4 pr-12 py-3.5 bg-background border  focus:outline-none focus:border-primary transition-all text-text-main placeholder:text-gray-500"
+                  className="w-full pl-4 pr-12 py-3.5 bg-background border-2  focus:outline-none focus:border-indigo-500 transition-all text-text-main placeholder:text-gray-500"
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleChange}
@@ -180,6 +181,12 @@ export const Signup = () => {
             </Link>
           </div>
         </div>
+      </div>
+      {/* Message Icon */}
+      <div className="absolute bottom-20 right-4">
+        <button className="w-14 h-14 bg-indigo-500 text-white rounded-full flex items-center justify-center">
+          <MessageCircle className="w-7 h-7" />
+        </button>
       </div>
     </div>
   );

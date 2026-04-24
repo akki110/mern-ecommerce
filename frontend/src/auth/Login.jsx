@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  MessageCircle,
+} from "lucide-react";
 import { useData } from "../context/AuthContext";
 
 export const Login = () => {
@@ -30,8 +37,8 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-[90vh] flex items-center justify-center ">
-      <div className="w-10/12 bg-white rounded-sm flex items-center justify-center px-4 py-12">
+    <div className="min-h-[90vh] flex items-center justify-center relative">
+      <div className="w-10/12 bg-white rounded-sm flex items-center justify-center px-4 py-12 ">
         <div className="w-full max-w-md p-5">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-semibold text-text-main mb-2">
@@ -47,7 +54,7 @@ export const Login = () => {
                   type="email"
                   required
                   name="email"
-                  className="w-full pl-4 pr-12 py-3.5 bg-background border-2  focus:outline-none focus:border-primary transition-all text-text-main placeholder:text-gray-500"
+                  className="w-full pl-4 pr-12 py-3.5 bg-background border-2  focus:outline-none focus:border-indigo-500 transition-all text-text-main placeholder:text-gray-500"
                   placeholder="Email address"
                   value={formData.email}
                   onChange={handleChange}
@@ -62,7 +69,7 @@ export const Login = () => {
                   type="password"
                   required
                   name="password"
-                  className="w-full pl-4 pr-12 py-3.5 bg-background border-2  focus:outline-none focus:border-primary transition-all text-text-main placeholder:text-gray-500"
+                  className="w-full pl-4 pr-12 py-3.5 bg-background border-2  focus:outline-none focus:border-indigo-500 transition-all text-text-main placeholder:text-gray-500"
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleChange}
@@ -99,6 +106,12 @@ export const Login = () => {
             Protected and subject to the User Agreement and Privacy Policy
           </p>
         </div>
+      </div>
+      {/* Message Icon */}
+      <div className="absolute bottom-20 right-4">
+        <button className="w-14 h-14 bg-indigo-500 text-white rounded-full flex items-center justify-center">
+          <MessageCircle className="w-7 h-7" />
+        </button>
       </div>
     </div>
   );
