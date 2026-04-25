@@ -244,17 +244,12 @@ const SidebarFilters = ({
               </div>
             </div>
           </div>
-          <PriceSlider
-            min={minPrice}
-            max={maxPrice}
-            onUpdate={onUpdate}
-          />
+          <PriceSlider min={minPrice} max={maxPrice} onUpdate={onUpdate} />
         </div>
       </div>
     </div>
   );
 };
-
 
 export const Listing = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -614,7 +609,7 @@ export const Listing = () => {
             {/* Desktop Sidebar Filters - Hide if search active */}
             {!isSearchActive && (
               <div className="hidden lg:block w-1/5">
-                <SidebarFilters 
+                <SidebarFilters
                   categoriesData={categoriesData}
                   categoryParam={categoryParam}
                   updateURLParams={updateURLParams}
@@ -636,7 +631,6 @@ export const Listing = () => {
                     });
                   }, [])}
                 />
-
               </div>
             )}
 
