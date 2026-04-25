@@ -40,6 +40,221 @@ const categoriesData = [
     sub: ["Utensils", "Cleaners"],
   },
 ];
+// Wrapper for 'range-slider-input' library
+const PriceSlider = React.memo(({ min, max, onUpdate }) => {
+  const sliderRef = useRef(null);
+  const sliderInstance = useRef(null);
+
+  useEffect(() => {
+    if (sliderRef.current && !sliderInstance.current) {
+      sliderInstance.current = rangeSlider(sliderRef.current, {
+        min: 0,
+        max: 1000,
+        step: 1,
+        value: [min, max],
+        thumbsDisabled: [false, false],
+        rangeSlide: true,
+        onInput: (value) => {
+          onUpdate(value[0], value[1]);
+        },
+      });
+    }
+  }, []);
+
+  // Sync external changes (like input boxes or URL) back to slider
+  useEffect(() => {
+    if (sliderInstance.current) {
+      const [currMin, currMax] = sliderInstance.current.value();
+      if (currMin !== min || currMax !== max) {
+        sliderInstance.current.value([min, max]);
+      }
+    }
+  }, [min, max]);
+
+  return (
+    <div className="px-1 py-6">
+      <div ref={sliderRef} className="epic-price-slider" />
+    </div>
+  );
+});
+
+const SidebarFilters = ({
+  categoriesData,
+  categoryParam,
+  updateURLParams,
+  inStockOnly,
+  setInStockOnly,
+  selectedSubCategories,
+  toggleSubCategory,
+  minPrice,
+  setMinPrice,
+  maxPrice,
+  setMaxPrice,
+  clearAllFilters,
+  setIsFilterOpen,
+  onUpdate,
+  isMobile = false,
+}) => {
+  const [openCategory, setOpenCategory] = React.useState(null);
+
+  return (
+    <div className={`flex flex-col gap-6 ${isMobile ? "p-6" : ""}`}>
+      {/* Categories Accordion */}
+      <div className="bg-white border border-gray-100 shadow-sm p-2">
+        <div className="p-4 border-b-2 border-gray-100">
+          <h3 className="text-[16px] font-bold text-[#191919]">Category</h3>
+        </div>
+        <div className="py-2">
+          {categoriesData.map((cat, idx) => (
+            <div key={idx} className="border-b border-gray-50 last:border-none">
+              <button
+                onClick={() =>
+                  setOpenCategory(openCategory === idx ? null : idx)
+                }
+                className="w-full flex items-center justify-between px-4 py-3 text-[14px] font-semibold text-[#191919] hover:text-primary transition-colors group"
+              >
+                <span className="flex items-center gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-200 group-hover:bg-primary transition-colors"></span>
+                  {cat.name}
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 text-gray-400 transition-transform ${openCategory === idx ? "rotate-180" : ""}`}
+                />
+              </button>
+              {openCategory === idx && (
+                <div className="bg-gray-50/50 px-8 py-2 flex flex-col gap-1 animate-in slide-in-from-top-2 duration-200">
+                  {cat.sub.map((sub, sIdx) => (
+                    <button
+                      key={sIdx}
+                      onClick={() => {
+                        updateURLParams({
+                          category: cat.slug,
+                          subCategory: sub,
+                        });
+                        if (isMobile) setIsFilterOpen(false);
+                      }}
+                      className="text-[12px] text-left text-gray-500 hover:text-primary transition-colors pl-2 py-1"
+                    >
+                      {sub}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Filters Card */}
+      <div className="bg-white border border-gray-100 shadow-sm p-2">
+        <div className="p-4 border-b-2 border-gray-100 flex items-center justify-between">
+          <h3 className="text-[16px] font-bold text-[#191919]">Filters</h3>
+          <button
+            onClick={clearAllFilters}
+            className="text-[11px] font-semibold hover:underline"
+          >
+            Clear All
+          </button>
+        </div>
+
+        {/* Availability */}
+        <div className="p-4 border-b-2 border-gray-100">
+          <h4 className="text-[13px] font-bold text-[#191919] mb-3 uppercase tracking-wider">
+            Availability
+          </h4>
+          <label className="flex items-center justify-between cursor-pointer group">
+            <span className="text-[13px] text-gray-600 group-hover:text-black transition-colors">
+              InStock Products
+            </span>
+            <input
+              type="checkbox"
+              checked={inStockOnly}
+              onChange={(e) => setInStockOnly(e.target.checked)}
+              className="w-4 h-4 accent-primary cursor-pointer border-gray-300 rounded"
+            />
+          </label>
+        </div>
+
+        {/* Sub-Categories */}
+        <div className="p-4 border-b-2 border-gray-100">
+          <h4 className="text-[13px] font-bold text-[#191919] mb-3 uppercase tracking-wider">
+            Categories
+          </h4>
+          <div className="flex flex-col gap-2.5">
+            {(
+              categoriesData.find((c) => c.slug === categoryParam)?.sub ||
+              categoriesData[0].sub
+            ).map((sub, idx) => (
+              <label
+                key={idx}
+                className="flex items-center justify-between cursor-pointer group"
+              >
+                <span className="text-[13px] text-gray-600 group-hover:text-black transition-colors">
+                  {sub}
+                </span>
+                <input
+                  type="checkbox"
+                  checked={selectedSubCategories.includes(sub)}
+                  onChange={() => toggleSubCategory(sub)}
+                  className="w-4 h-4 accent-primary cursor-pointer border-gray-300 rounded"
+                />
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Price Range */}
+        <div className="p-4">
+          <h4 className="text-[13px] font-bold text-[#191919] mb-4 uppercase tracking-wider">
+            Price
+          </h4>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <label className="text-[10px] text-gray-400 uppercase font-bold mb-1 block">
+                  Min Price
+                </label>
+                <div className="relative">
+                  <span className="absolute left-2 top-1.5 text-gray-400 text-[12px]">
+                    $
+                  </span>
+                  <input
+                    type="number"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(Number(e.target.value))}
+                    className="w-full border border-gray-100 rounded bg-gray-50 pl-5 pr-2 py-1.5 text-[12px] focus:outline-none focus:border-primary"
+                  />
+                </div>
+              </div>
+              <div className="flex-1">
+                <label className="text-[10px] text-gray-400 uppercase font-bold mb-1 block">
+                  Max Price
+                </label>
+                <div className="relative">
+                  <span className="absolute left-2 top-1.5 text-gray-400 text-[12px]">
+                    $
+                  </span>
+                  <input
+                    type="number"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(Number(e.target.value))}
+                    className="w-full border border-gray-100 rounded bg-gray-50 pl-5 pr-2 py-1.5 text-[12px] focus:outline-none focus:border-primary"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <PriceSlider
+            min={minPrice}
+            max={maxPrice}
+            onUpdate={onUpdate}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 export const Listing = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -175,88 +390,6 @@ export const Listing = () => {
     searchParams.get("subCategory"),
   ]);
 
-  // Sub-component for a Pure Tailwind Dual Range Slider (Smooth & Debounced)
-  const PriceSlider = ({ min, max, onUpdate }) => {
-    const [localMin, setLocalMin] = useState(min);
-    const [localMax, setLocalMax] = useState(max);
-
-    // Sync local state when props change (from URL or Inputs)
-    useEffect(() => {
-      setLocalMin(min);
-      setLocalMax(max);
-    }, [min, max]);
-
-    const handleMinInput = (e) => {
-      const val = Math.min(Number(e.target.value), localMax - 1);
-      setLocalMin(val);
-      onUpdate(val, localMax); // Real-time feedback
-    };
-
-    const handleMaxInput = (e) => {
-      const val = Math.max(Number(e.target.value), localMin + 1);
-      setLocalMax(val);
-      onUpdate(localMin, val); // Real-time feedback
-    };
-
-    // Update URL only when user stops dragging
-    const handleMouseUp = () => {
-      // Logic handled in Listing.jsx debounce or onUpdate
-    };
-
-    // Calculate percentages for the green track
-    const minPercent = (localMin / 1000) * 100;
-    const maxPercent = (localMax / 1000) * 100;
-
-    return (
-      <div className="px-1 py-6">
-        <div className="relative w-full h-1.5 bg-gray-100 rounded-full">
-          {/* Green Track Range */}
-          <div
-            className="absolute h-full bg-[#51a133] rounded-full"
-            style={{ left: `${minPercent}%`, right: `${100 - maxPercent}%` }}
-          />
-
-          {/* Min Input */}
-          <input
-            type="range"
-            min="0"
-            max="1000"
-            value={localMin}
-            onInput={handleMinInput}
-            onMouseUp={handleMouseUp}
-            onTouchEnd={handleMouseUp}
-            className={`absolute w-full h-1.5 appearance-none bg-transparent pointer-events-none cursor-pointer
-                       [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto 
-                       [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full 
-                       [&::-webkit-slider-thumb]:bg-[#51a133] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white 
-                       [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 
-                       [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#51a133] [&::-moz-range-thumb]:border-2 
-                       [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md
-                       ${localMin > 500 ? "z-40" : "z-20"}`} // Dynamic Z-index to avoid overlap issues
-          />
-
-          {/* Max Input */}
-          <input
-            type="range"
-            min="0"
-            max="1000"
-            value={localMax}
-            onInput={handleMaxInput}
-            onMouseUp={handleMouseUp}
-            onTouchEnd={handleMouseUp}
-            className="absolute w-full h-1.5 appearance-none bg-transparent pointer-events-none cursor-pointer z-30
-                       [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto 
-                       [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full 
-                       [&::-webkit-slider-thumb]:bg-[#51a133] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white 
-                       [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 
-                       [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#51a133] [&::-moz-range-thumb]:border-2 
-                       [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md"
-          />
-        </div>
-      </div>
-    );
-  };
-
   const toggleSubCategory = (sub) => {
     const newSubs = selectedSubCategories.includes(sub)
       ? selectedSubCategories.filter((i) => i !== sub)
@@ -270,15 +403,15 @@ export const Listing = () => {
     updateURLParams({ inStock: val ? "true" : null });
   };
 
-  const setMinPrice = (val) => {
+  const setMinPrice = React.useCallback((val) => {
     setMinPriceState(val);
     debouncedUpdateURL({ minPrice: val > 0 ? val : null });
-  };
+  }, []);
 
-  const setMaxPrice = (val) => {
+  const setMaxPrice = React.useCallback((val) => {
     setMaxPriceState(val);
     debouncedUpdateURL({ maxPrice: val < 1000 ? val : null });
-  };
+  }, []);
 
   // Debounced URL Update with Merged Pending Params
   const timeoutRef = useRef(null);
@@ -316,164 +449,6 @@ export const Listing = () => {
   const clearAllFilters = () => {
     setSearchParams({});
   };
-
-  // Filter Sidebar Component for reuse
-  const SidebarFilters = ({ isMobile = false }) => (
-    <div className={`flex flex-col gap-6 ${isMobile ? "p-6" : ""}`}>
-      {/* Categories Card */}
-      <div className="bg-white border border-gray-100 shadow-sm p-2">
-        <div className="p-4 border-b-2 border-gray-100">
-          <h3 className="text-[16px] font-bold text-[#191919]">Categories</h3>
-        </div>
-        <div className="flex flex-col">
-          {categoriesData.map((cat, idx) => (
-            <div key={idx} className="border-b-2 border-gray-100 last:border-0">
-              <button
-                onClick={() =>
-                  setOpenCategory(openCategory === idx ? null : idx)
-                }
-                className="w-full flex items-center justify-between p-3.5 hover:bg-gray-50 transition-all text-[13px] font-medium text-gray-700"
-              >
-                {cat.name}
-                <ChevronDown
-                  className={`w-3.5 h-3.5 transition-transform ${openCategory === idx ? "rotate-180 text-primary" : "text-gray-400"}`}
-                />
-              </button>
-              {openCategory === idx && (
-                <div className="bg-gray-50 px-4 pb-3 flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                  {cat.sub.map((sub, sIdx) => (
-                    <button
-                      key={sIdx}
-                      onClick={() => {
-                        updateURLParams({
-                          category: cat.slug,
-                          subCategory: sub,
-                        });
-                        if (isMobile) setIsFilterOpen(false);
-                      }}
-                      className="text-[12px] text-left text-gray-500 hover:text-primary transition-colors pl-2 py-1"
-                    >
-                      {sub}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Filters Card */}
-      <div className="bg-white border border-gray-100 shadow-sm p-2">
-        <div className="p-4 border-b-2 border-gray-100 flex items-center justify-between">
-          <h3 className="text-[16px] font-bold text-[#191919]">Filters</h3>
-          <button
-            onClick={clearAllFilters}
-            className="text-[11px] font-semibold hover:underline"
-          >
-            Clear All
-          </button>
-        </div>
-
-        {/* Availability */}
-        <div className="p-4 border-b-2 border-gray-100">
-          <h4 className="text-[13px] font-bold text-[#191919] mb-3 uppercase tracking-wider">
-            Availability
-          </h4>
-          <label className="flex items-center justify-between cursor-pointer group">
-            <span className="text-[13px] text-gray-600 group-hover:text-black transition-colors">
-              InStock Products
-            </span>
-            <input
-              type="checkbox"
-              checked={inStockOnly}
-              onChange={(e) => setInStockOnly(e.target.checked)}
-              className="w-4 h-4 accent-primary cursor-pointer border-gray-300 rounded"
-            />
-          </label>
-        </div>
-
-        {/* Sub-Categories */}
-        <div className="p-4 border-b-2 border-gray-100">
-          <h4 className="text-[13px] font-bold text-[#191919] mb-3 uppercase tracking-wider">
-            Categories
-          </h4>
-          <div className="flex flex-col gap-2.5">
-            {(
-              categoriesData.find((c) => c.slug === categoryParam)?.sub ||
-              categoriesData[0].sub
-            ).map((sub, idx) => (
-              <label
-                key={idx}
-                className="flex items-center justify-between cursor-pointer group"
-              >
-                <span className="text-[13px] text-gray-600 group-hover:text-black transition-colors">
-                  {sub}
-                </span>
-                <input
-                  type="checkbox"
-                  checked={selectedSubCategories.includes(sub)}
-                  onChange={() => toggleSubCategory(sub)}
-                  className="w-4 h-4 accent-primary cursor-pointer border-gray-300 rounded"
-                />
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Price Range */}
-        <div className="p-4">
-          <h4 className="text-[13px] font-bold text-[#191919] mb-4 uppercase tracking-wider">
-            Price
-          </h4>
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex-1">
-                <label className="text-[10px] text-gray-400 uppercase font-bold mb-1 block">
-                  Min Price
-                </label>
-                <div className="relative">
-                  <span className="absolute left-2 top-1.5 text-gray-400 text-[12px]">
-                    $
-                  </span>
-                  <input
-                    type="number"
-                    value={minPrice}
-                    onChange={(e) => setMinPrice(Number(e.target.value))}
-                    className="w-full border border-gray-100 rounded bg-gray-50 pl-5 pr-2 py-1.5 text-[12px] focus:outline-none focus:border-primary"
-                  />
-                </div>
-              </div>
-              <div className="flex-1">
-                <label className="text-[10px] text-gray-400 uppercase font-bold mb-1 block">
-                  Max Price
-                </label>
-                <div className="relative">
-                  <span className="absolute left-2 top-1.5 text-gray-400 text-[12px]">
-                    $
-                  </span>
-                  <input
-                    type="number"
-                    value={maxPrice}
-                    onChange={(e) => setMaxPrice(Number(e.target.value))}
-                    className="w-full border border-gray-100 rounded bg-gray-50 pl-5 pr-2 py-1.5 text-[12px] focus:outline-none focus:border-primary"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <PriceSlider
-            min={minPrice}
-            max={maxPrice}
-            onUpdate={(min, max) => {
-              setMinPrice(min);
-              setMaxPrice(max);
-            }}
-          />
-        </div>
-      </div>
-    </div>
-  );
 
   const suggestedTerms = [
     "Maggi",
@@ -521,7 +496,30 @@ export const Listing = () => {
             </svg>
           </button>
         </div>
-        <SidebarFilters isMobile={true} />
+        <SidebarFilters
+          isMobile={true}
+          categoriesData={categoriesData}
+          categoryParam={categoryParam}
+          updateURLParams={updateURLParams}
+          inStockOnly={inStockOnly}
+          setInStockOnly={setInStockOnly}
+          selectedSubCategories={selectedSubCategories}
+          toggleSubCategory={toggleSubCategory}
+          minPrice={minPrice}
+          setMinPrice={setMinPrice}
+          maxPrice={maxPrice}
+          setMaxPrice={setMaxPrice}
+          clearAllFilters={clearAllFilters}
+          onUpdate={React.useCallback((min, max) => {
+            setMinPriceState(min);
+            setMaxPriceState(max);
+            debouncedUpdateURL({
+              minPrice: min > 0 ? min : null,
+              maxPrice: max < 1000 ? max : null,
+            });
+          }, [])}
+          setIsFilterOpen={setIsFilterOpen}
+        />
       </div>
 
       <div className="w-full max-w-7xl">
@@ -616,7 +614,29 @@ export const Listing = () => {
             {/* Desktop Sidebar Filters - Hide if search active */}
             {!isSearchActive && (
               <div className="hidden lg:block w-1/5">
-                <SidebarFilters />
+                <SidebarFilters 
+                  categoriesData={categoriesData}
+                  categoryParam={categoryParam}
+                  updateURLParams={updateURLParams}
+                  inStockOnly={inStockOnly}
+                  setInStockOnly={setInStockOnly}
+                  selectedSubCategories={selectedSubCategories}
+                  toggleSubCategory={toggleSubCategory}
+                  minPrice={minPrice}
+                  setMinPrice={setMinPrice}
+                  maxPrice={maxPrice}
+                  setMaxPrice={setMaxPrice}
+                  clearAllFilters={clearAllFilters}
+                  onUpdate={React.useCallback((min, max) => {
+                    setMinPriceState(min);
+                    setMaxPriceState(max);
+                    debouncedUpdateURL({
+                      minPrice: min > 0 ? min : null,
+                      maxPrice: max < 1000 ? max : null,
+                    });
+                  }, [])}
+                />
+
               </div>
             )}
 

@@ -101,14 +101,11 @@ const ProductCarousel = ({ title, data, rows = 1 }) => {
             ))
           : // Multi-row behavior (Chunked into slides of 10)
             slides.map((slideItems, slideIdx) => {
-              // Reorder items for grid-cols-5 to get interleaved flow (1 Top, 2 Bottom, etc.)
-              // Goal layout: [P1, P3, P5, P7, P9] (Row 1)
-              //              [P2, P4, P6, P8, P10] (Row 2)
               const reorderedItems = [];
               for (let i = 0; i < 5; i++) {
-                if (slideItems[i * 2]) reorderedItems[i] = slideItems[i * 2]; // Top row
+                if (slideItems[i * 2]) reorderedItems[i] = slideItems[i * 2];
                 if (slideItems[i * 2 + 1])
-                  reorderedItems[i + 5] = slideItems[i * 2 + 1]; // Bottom row
+                  reorderedItems[i + 5] = slideItems[i * 2 + 1];
               }
 
               return (

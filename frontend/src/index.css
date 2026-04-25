@@ -82,3 +82,36 @@ body {
   background: var(--color-primary) !important;
   border: 1px solid var(--color-primary) !important;
 }
+
+/* Custom styles for range-slider-input library */
+.epic-price-slider {
+  height: 6px !important;
+  background: #f1f5f9 !important;
+  border-radius: 999px !important;
+  border: none !important;
+}
+
+.epic-price-slider .range-slider__range {
+  background: #51a133 !important;
+  height: 100% !important;
+  border-radius: 999px !important;
+}
+
+.epic-price-slider .range-slider__thumb {
+  width: 18px !important;
+  height: 18px !important;
+  background: #51a133 !important;
+  border: 2px solid white !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+}
+
+.epic-price-slider .range-slider__thumb[data-active] {
+  transform: scale(1.15) !important;
+}
+
+.epic-price-slider .range-slider__thumb:focus-visible {
+  outline: 2px solid #51a133 !important;
+  outline-offset: 2px !important;
+}
