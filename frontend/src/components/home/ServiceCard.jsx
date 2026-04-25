@@ -16,7 +16,7 @@ export const ServiceCard = () => {
             Enlish rocery items at competitive prices, which will not only make
             you want to buy from us but also stay with us as a reular customer.
           </p>
-          <div className="w-full flex justify-between items-center mt-8">
+          <div className="w-full flex justify-center items-center gap-10 lg:gap-16 mt-8">
             <div className="flex flex-col justify-center items-center">
               <Package strokeWidth={1} className="w-15 h-15 text-primary" />
               <p>10,000+ Products</p>
