@@ -154,7 +154,7 @@ export const Home = () => {
           </div>
 
           <div className="">
-            <ProductCarousel title={null} data={recentProducts} />
+            <ProductCarousel title={null} data={recentProducts} rows={2} />
           </div>
         </div>
       </div>
