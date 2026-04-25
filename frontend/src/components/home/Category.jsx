@@ -3,6 +3,13 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useFetch } from "../../hooks/useFetch";
 import { API_ENDPOINTS } from "../../utils/constant";
+import img1 from "../../../public/category/1.png";
+import img2 from "../../../public/category/2.png";
+import img3 from "../../../public/category/3.png";
+import img4 from "../../../public/category/4.png";
+import img5 from "../../../public/category/5.png";
+import img6 from "../../../public/category/6.png";
+import img7 from "../../../public/category/7.png";
 
 export const Category = () => {
   const scrollRef = useRef(null);
@@ -13,22 +20,34 @@ export const Category = () => {
   const categoryDataMap = {
     "fruits-and-vegetables": {
       label: "Fresh Vegetables",
-      emoji: "🥦",
+      emoji: <img src={img1} alt="" className="w-18 h-18" />,
       isNew: false,
     },
-    staples: { label: "Pure Rice", emoji: "🍚", isNew: false },
-    "dairy-and-bakery": { label: "Groceries", emoji: "🛍️", isNew: false },
+    staples: {
+      label: "Pure Rice",
+      emoji: <img src={img2} alt="" className="w-18 h-18" />,
+      isNew: false,
+    },
+    "dairy-and-bakery": {
+      label: "Groceries",
+      emoji: <img src={img3} alt="" className="w-18 h-18" />,
+      isNew: false,
+    },
     "home-and-kitchen": {
       label: "Flours, Grains & Atta",
-      emoji: "🌾",
+      emoji: <img src={img4} alt="" className="w-18 h-18" />,
       isNew: true,
     },
     "snacks-and-branded-foods": {
       label: "Dry Fruits & Nuts",
-      emoji: "🥜",
+      emoji: <img src={img5} alt="" className="w-18 h-18" />,
       isNew: false,
     },
-    beverages: { label: "Healthy Snacks", emoji: "🍿", isNew: false },
+    beverages: {
+      label: "Healthy Snacks",
+      emoji: <img src={img7} alt="" className="w-18 h-18" />,
+      isNew: false,
+    },
   };
 
   useEffect(() => {
@@ -106,7 +125,7 @@ export const Category = () => {
           {categories.map((catKey) => {
             const data = categoryDataMap[catKey] || {
               label: catKey.replace(/-/g, " "),
-              emoji: "📦",
+              emoji: <img src={img6} alt="Category" className="w-18 h-18" />,
               isNew: false,
             };
 
