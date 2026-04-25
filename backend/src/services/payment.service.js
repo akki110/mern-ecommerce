@@ -19,7 +19,6 @@ exports.createRazorpayOrder = async (amount) => {
         const order = await razorpay.orders.create(options);
         return order;
     } catch (error) {
-        console.error("Razorpay Order Creation Error:", error);
         throw new ApiError(500, "Failed to create Razorpay order");
     }
 }
@@ -42,7 +41,6 @@ exports.verifyPayment = async (orderId, paymentId, signature, userId, addressInf
         .digest("hex");
 
     if (generated_signature !== signature) {
-        console.log("Signature Mismatch!");
         throw new ApiError(400, "Invalid payment signature");
     }
 

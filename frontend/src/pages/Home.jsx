@@ -47,9 +47,7 @@ export const Home = () => {
       if (res.success) {
         setTopSellingProducts(res.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch top selling products:", error);
-    }
+    } catch (error) {}
   };
 
   const fetchFeaturedProducts = async () => {
@@ -61,9 +59,7 @@ export const Home = () => {
       if (res.success) {
         setFeaturedProducts(res.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch featured products:", error);
-    }
+    } catch (error) {}
   };
 
   const fetchRecentProducts = async () => {
@@ -75,9 +71,7 @@ export const Home = () => {
       if (res.success) {
         setRecentProducts(res.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch recent products:", error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {

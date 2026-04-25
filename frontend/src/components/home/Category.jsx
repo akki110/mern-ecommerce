@@ -65,9 +65,7 @@ export const Category = () => {
           ];
           setCategories(uniqueCategories);
         }
-      } catch (error) {
-        console.error("Failed to fetch categories:", error);
-      }
+      } catch (error) {}
     };
     fetchCategories();
   }, []);

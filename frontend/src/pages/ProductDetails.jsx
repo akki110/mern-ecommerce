@@ -47,9 +47,7 @@ export const ProductDetails = () => {
           setProduct(res.data);
           setSelectedImage(0);
         }
-      } catch (error) {
-        console.log("Failed to Fetch product");
-      }
+      } catch (error) {}
     };
     if (id) {
       fetchProductData();
@@ -66,9 +64,7 @@ export const ProductDetails = () => {
           if (res.success) {
             setSimilarProducts(res.data.filter((p) => p._id !== id));
           }
-        } catch (error) {
-          console.log("Failed to fetch similar products");
-        }
+        } catch (error) {}
       };
       fetchSimilar();
     }

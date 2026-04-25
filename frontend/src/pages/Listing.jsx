@@ -52,8 +52,6 @@ export const Listing = () => {
   const [dropdown, setDropdown] = useState(false);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const sliderRef = useRef(null);
-  const sliderInstance = useRef(null);
 
   const [openCategory, setOpenCategory] = useState(null);
 
@@ -153,9 +151,7 @@ export const Listing = () => {
       if (res.success) {
         setProducts(res.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch products:", error);
-    }
+    } catch (error) {}
   };
 
   // Trigger fetch on Search, Category, Sort or any Filter change

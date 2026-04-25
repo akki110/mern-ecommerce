@@ -46,8 +46,12 @@ export const ProductCard = ({ item }) => {
     >
       {/* Sale Badge */}
       {item.isSale && (
-        <div className="absolute top-4 right-4 z-10 w-10 h-10 bg-green-600 rounded-full flex flex-col items-center justify-center text-white leading-tight shadow-lg shadow-[#00B67A]/20">
-          <span className="text-[11px] font-bold">20%</span>
+        <div
+          className={`absolute top-4 right-4 z-10 w-10 h-10 ${item?.discountPercentage > 12 ? "bg-green-600" : "bg-yellow-500"} rounded-full flex flex-col items-center justify-center text-white leading-tight shadow-lg shadow-[#00B67A]/20`}
+        >
+          <span className="text-[11px] font-bold">
+            {item.discountPercentage}%
+          </span>
           <span className="text-[10px]">off</span>
         </div>
       )}

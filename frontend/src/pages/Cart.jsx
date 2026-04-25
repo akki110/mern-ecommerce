@@ -59,7 +59,6 @@ export const Cart = () => {
                 },
               },
             });
-            console.log("Verify Response:", verify); // Debugging
             if (verify && (verify.success || verify.verified)) {
               toast.success("Payment Verified Successfully");
               clearCart();
@@ -86,7 +85,6 @@ export const Cart = () => {
       razor.open();
     } catch (error) {
       toast.error("Something went wrong with the payment");
-      console.log("Payment Error: ", error);
     }
   };
 
@@ -104,7 +102,7 @@ export const Cart = () => {
         </p>
         <Link
           to="/list"
-          className="px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-lg shadow-primary/20"
+          className="px-8 py-3 bg-transpatent border text-black font-semibold  hover:bg-primary hover:border-primary hover:text-white transition-all"
         >
           Start Shopping
         </Link>
@@ -230,7 +228,7 @@ export const Cart = () => {
                 onClick={() => {
                   handlePayment();
                 }}
-                className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-3 active:scale-[0.98]"
+                className="py-3 w-full bg-transpatent font-semibold bg-primary cursor-pointer hover:bg-primary-hover text-white transition-all"
               >
                 Checkout Now
               </button>

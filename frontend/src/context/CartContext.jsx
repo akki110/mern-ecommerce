@@ -23,14 +23,13 @@ export const CartContext = ({ children }) => {
         // 1. Sync Guest Cart to Backend FIRST
         const localCart = JSON.parse(localStorage.getItem("cart")) || [];
         if (localCart.length > 0) {
-          console.log("CartContext: Found guest items to sync:", localCart);
           try {
             await Promise.all(
               localCart.map((item) => {
                 // Determine ID and quantity from possible property names
                 const pId = item._id || item.id || item.productId;
                 const pQty = item.quantity || item.qty || 1;
-                
+
                 if (!pId) return Promise.resolve(); // Skip invalid items
 
                 return callApi({
@@ -41,11 +40,8 @@ export const CartContext = ({ children }) => {
               }),
             );
             localStorage.removeItem("cart");
-            console.log("CartContext: Sync completed successfully");
             toast.success("Guest items added to your account");
-          } catch (syncErr) {
-            console.error("CartContext: Sync failed", syncErr);
-          }
+          } catch (syncErr) {}
         }
 
         // 2. Fetch the updated cart from Backend
@@ -62,9 +58,7 @@ export const CartContext = ({ children }) => {
 
           setCartItems(formattedItems);
         }
-      } catch (error) {
-        console.error("Failed to sync/fetch cart:", error.message);
-      }
+      } catch (error) {}
     }
   };
 

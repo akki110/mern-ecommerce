@@ -28,11 +28,9 @@ export const MyOrders = () => {
         });
         if (orders.success) {
           setOrders(orders.data);
-          console.log(orders.data);
         }
       } catch (error) {
         toast.error("Failed to fetch orders");
-        console.log(error);
       }
     }
   };
@@ -40,78 +38,6 @@ export const MyOrders = () => {
   useEffect(() => {
     fetchUserOrders();
   }, [isAuthenticated]);
-
-  // const orders = [
-  //   {
-  //     id: "ORD-982345",
-  //     date: "Oct 15, 2023",
-  //     status: "Delivered",
-  //     total: 370.0,
-  //     items: [
-  //       {
-  //         id: 1,
-  //         name: "Minimalist Leather Watch",
-  //         price: 120.0,
-  //         quantity: 1,
-  //         image:
-  //           "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1170&auto=format&fit=crop",
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Noise Cancelling Headphones",
-  //         price: 250.0,
-  //         quantity: 1,
-  //         image:
-  //           "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1170&auto=format&fit=crop",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: "ORD-771209",
-  //     date: "Oct 18, 2023",
-  //     status: "Processing",
-  //     total: 85.0,
-  //     items: [
-  //       {
-  //         id: 3,
-  //         name: "Premium Canvas Backpack",
-  //         price: 85.0,
-  //         quantity: 1,
-  //         image:
-  //           "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1170&auto=format&fit=crop",
-  //       },
-  //     ],
-  //   },
-  // ];
-
-  const getStatusStyles = (status) => {
-    switch (status) {
-      case "Delivered":
-        return {
-          bg: "bg-emerald-50",
-          text: "text-emerald-700",
-          icon: <CheckCircle2 className="w-4 h-4" />,
-        };
-      case "Shipped":
-        return {
-          bg: "bg-blue-50",
-          text: "text-blue-700",
-          icon: <Truck className="w-4 h-4" />,
-        };
-      case "Processing":
-        return {
-          bg: "bg-amber-50",
-          text: "text-amber-700",
-          icon: <Clock className="w-4 h-4" />,
-        };
-      default:
-        return {
-          bg: "bg-gray-50",
-          text: "text-gray-700",
-          icon: <Package className="w-4 h-4" />,
-        };
-    }
-  };
 
   if (orders.length === 0) {
     return (
@@ -147,7 +73,7 @@ export const MyOrders = () => {
               Track and manage your recent purchases
             </p>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-surface rounded-xl border border-border shadow-sm">
+          <div className="flex items-center gap-2 px-4 py-2 bg-surface border border-border">
             <ShoppingBag className="w-5 h-5 text-primary" />
             <span className="font-bold text-text-main">
               {orders.length} Total Orders
