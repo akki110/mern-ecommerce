@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ProductCard } from "../components/ProductCard";
 import { useFetch } from "../hooks/useFetch";
 import { API_ENDPOINTS } from "../utils/constant";
 import { Loader } from "../components/Loader";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import rangeSlider from "range-slider-input";
+import "range-slider-input/dist/style.css";
 import banner from "../../public/banner.png";
 
 import { Link, useSearchParams } from "react-router-dom";
@@ -50,15 +52,28 @@ export const Listing = () => {
   const [dropdown, setDropdown] = useState(false);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const sliderRef = useRef(null);
+  const sliderInstance = useRef(null);
 
   const [openCategory, setOpenCategory] = useState(null);
 
   // Sync states with URL Search Params
+  const [minPrice, setMinPriceState] = useState(
+    Number(searchParams.get("minPrice")) || 0,
+  );
+  const [maxPrice, setMaxPriceState] = useState(
+    Number(searchParams.get("maxPrice")) || 1000,
+  );
+
   const inStockOnly = searchParams.get("inStock") === "true";
-  const minPrice = Number(searchParams.get("minPrice")) || 0;
-  const maxPrice = Number(searchParams.get("maxPrice")) || 1000;
   const selectedSubCategories =
     searchParams.get("subCategory")?.split(",").filter(Boolean) || [];
+
+  // Update states when URL changes (e.g. browser back button)
+  useEffect(() => {
+    setMinPriceState(Number(searchParams.get("minPrice")) || 0);
+    setMaxPriceState(Number(searchParams.get("maxPrice")) || 1000);
+  }, [searchParams]);
 
   const { loading, callApi } = useFetch();
 
@@ -164,6 +179,88 @@ export const Listing = () => {
     searchParams.get("subCategory"),
   ]);
 
+  // Sub-component for a Pure Tailwind Dual Range Slider (Smooth & Debounced)
+  const PriceSlider = ({ min, max, onUpdate }) => {
+    const [localMin, setLocalMin] = useState(min);
+    const [localMax, setLocalMax] = useState(max);
+
+    // Sync local state when props change (from URL or Inputs)
+    useEffect(() => {
+      setLocalMin(min);
+      setLocalMax(max);
+    }, [min, max]);
+
+    const handleMinInput = (e) => {
+      const val = Math.min(Number(e.target.value), localMax - 1);
+      setLocalMin(val);
+      onUpdate(val, localMax); // Real-time feedback
+    };
+
+    const handleMaxInput = (e) => {
+      const val = Math.max(Number(e.target.value), localMin + 1);
+      setLocalMax(val);
+      onUpdate(localMin, val); // Real-time feedback
+    };
+
+    // Update URL only when user stops dragging
+    const handleMouseUp = () => {
+      // Logic handled in Listing.jsx debounce or onUpdate
+    };
+
+    // Calculate percentages for the green track
+    const minPercent = (localMin / 1000) * 100;
+    const maxPercent = (localMax / 1000) * 100;
+
+    return (
+      <div className="px-1 py-6">
+        <div className="relative w-full h-1.5 bg-gray-100 rounded-full">
+          {/* Green Track Range */}
+          <div
+            className="absolute h-full bg-[#51a133] rounded-full"
+            style={{ left: `${minPercent}%`, right: `${100 - maxPercent}%` }}
+          />
+
+          {/* Min Input */}
+          <input
+            type="range"
+            min="0"
+            max="1000"
+            value={localMin}
+            onInput={handleMinInput}
+            onMouseUp={handleMouseUp}
+            onTouchEnd={handleMouseUp}
+            className={`absolute w-full h-1.5 appearance-none bg-transparent pointer-events-none cursor-pointer
+                       [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto 
+                       [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full 
+                       [&::-webkit-slider-thumb]:bg-[#51a133] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white 
+                       [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 
+                       [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#51a133] [&::-moz-range-thumb]:border-2 
+                       [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md
+                       ${localMin > 500 ? "z-40" : "z-20"}`} // Dynamic Z-index to avoid overlap issues
+          />
+
+          {/* Max Input */}
+          <input
+            type="range"
+            min="0"
+            max="1000"
+            value={localMax}
+            onInput={handleMaxInput}
+            onMouseUp={handleMouseUp}
+            onTouchEnd={handleMouseUp}
+            className="absolute w-full h-1.5 appearance-none bg-transparent pointer-events-none cursor-pointer z-30
+                       [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto 
+                       [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full 
+                       [&::-webkit-slider-thumb]:bg-[#51a133] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white 
+                       [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 
+                       [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#51a133] [&::-moz-range-thumb]:border-2 
+                       [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md"
+          />
+        </div>
+      </div>
+    );
+  };
+
   const toggleSubCategory = (sub) => {
     const newSubs = selectedSubCategories.includes(sub)
       ? selectedSubCategories.filter((i) => i !== sub)
@@ -178,11 +275,46 @@ export const Listing = () => {
   };
 
   const setMinPrice = (val) => {
-    updateURLParams({ minPrice: val > 0 ? val : null });
+    setMinPriceState(val);
+    debouncedUpdateURL({ minPrice: val > 0 ? val : null });
   };
 
   const setMaxPrice = (val) => {
-    updateURLParams({ maxPrice: val < 1000 ? val : null });
+    setMaxPriceState(val);
+    debouncedUpdateURL({ maxPrice: val < 1000 ? val : null });
+  };
+
+  // Debounced URL Update with Merged Pending Params
+  const timeoutRef = useRef(null);
+  const pendingParamsRef = useRef({});
+
+  const debouncedUpdateURL = (newParams) => {
+    // Merge new changes into pending ref
+    pendingParamsRef.current = { ...pendingParamsRef.current, ...newParams };
+
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    timeoutRef.current = setTimeout(() => {
+      setSearchParams((prev) => {
+        const currentParams = Object.fromEntries(prev.entries());
+        const updatedParams = { ...currentParams, ...pendingParamsRef.current };
+
+        // Remove empty values
+        Object.keys(updatedParams).forEach((key) => {
+          if (
+            updatedParams[key] === "" ||
+            updatedParams[key] === null ||
+            updatedParams[key] === undefined
+          ) {
+            delete updatedParams[key];
+          }
+        });
+
+        // Clear pending ref after successful update
+        pendingParamsRef.current = {};
+        return updatedParams;
+      });
+    }, 400); // Slightly longer debounce for stability
   };
 
   const clearAllFilters = () => {
@@ -333,17 +465,15 @@ export const Listing = () => {
                 </div>
               </div>
             </div>
-            <div className="px-1">
-              <input
-                type="range"
-                min="0"
-                max="1000"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="w-full h-1 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-primary"
-              />
-            </div>
           </div>
+          <PriceSlider
+            min={minPrice}
+            max={maxPrice}
+            onUpdate={(min, max) => {
+              setMinPrice(min);
+              setMaxPrice(max);
+            }}
+          />
         </div>
       </div>
     </div>

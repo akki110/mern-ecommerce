@@ -72,13 +72,13 @@ const ProductCarousel = ({ title, data, rows = 1 }) => {
         <div className="flex gap-2 ml-auto">
           <button
             onClick={() => scroll("left")}
-            className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-green-600 transition-colors bg-white rounded-full shadow-sm border border-gray-100"
+            className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-green-600"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-green-600 transition-colors bg-white rounded-full shadow-sm border border-gray-100"
+            className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-green-600"
           >
             <ArrowRight className="w-6 h-6" />
           </button>

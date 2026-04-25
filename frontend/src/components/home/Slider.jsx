@@ -6,6 +6,7 @@ import { Pagination } from "swiper/modules";
 import bg1 from "../../../public/bg1.jpg";
 import bg2 from "../../../public/bg2.jpg";
 import bg3 from "../../../public/bg3.jpg";
+import { Link } from "react-router-dom";
 
 export const Slider = () => {
   const sliderdata = [
@@ -60,9 +61,12 @@ export const Slider = () => {
                   <p className="text-gray-800 text-md max-w-[70%] mb-4">
                     {item.desc}
                   </p>
-                  <button className="bg-primary text-white px-10 py-2.5">
+                  <Link
+                    to={item.btnlink}
+                    className="bg-primary text-white px-10 py-2.5"
+                  >
                     {item.btntitle}
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>

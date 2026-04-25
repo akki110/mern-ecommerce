@@ -10,11 +10,12 @@ import img4 from "../../../public/category/4.png";
 import img5 from "../../../public/category/5.png";
 import img6 from "../../../public/category/6.png";
 import img7 from "../../../public/category/7.png";
+import { Loader } from "../Loader";
 
 export const Category = () => {
   const scrollRef = useRef(null);
   const [categories, setCategories] = useState([]);
-  const { callApi } = useFetch();
+  const { callApi, loading } = useFetch();
 
   // Static data mapping for emojis and display labels
   const categoryDataMap = {
@@ -87,8 +88,6 @@ export const Category = () => {
     }
   };
 
-  if (!categories.length) return null;
-
   return (
     <section className="py-8 md:py-16 overflow-hidden">
       <div className="w-full md:w-11/12 mx-auto px-6 relative">
@@ -118,45 +117,53 @@ export const Category = () => {
         </div>
 
         {/* Categories Carousel */}
-        <div
-          ref={scrollRef}
-          className="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory pb-6"
-        >
-          {categories.map((catKey) => {
-            const data = categoryDataMap[catKey] || {
-              label: catKey.replace(/-/g, " "),
-              emoji: <img src={img6} alt="Category" className="w-18 h-18" />,
-              isNew: false,
-            };
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader />
+          </div>
+        ) : categories.length === 0 ? (
+          <div className="text-center py-20">No categories found</div>
+        ) : (
+          <div
+            ref={scrollRef}
+            className="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory pb-6"
+          >
+            {categories.map((catKey) => {
+              const data = categoryDataMap[catKey] || {
+                label: catKey.replace(/-/g, " "),
+                emoji: <img src={img6} alt="Category" className="w-18 h-18" />,
+                isNew: false,
+              };
 
-            return (
-              <Link
-                key={catKey}
-                to={`/listing?category=${catKey}`}
-                className="flex-none w-[200px] sm:w-[220px] group snap-start py-10"
-              >
-                <div className="relative h-[140px] bg-white border border-gray-200 rounded-sm flex flex-col items-center justify-center transition-all duration-500  group-hover:-translate-y-2">
-                  {/* "New" Badge */}
-                  {data.isNew && (
-                    <div className="absolute top-4 right-4 z-10 bg-[#E7F7F0] text-[#00B67A] text-[11px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
-                      New
+              return (
+                <Link
+                  key={catKey}
+                  to={`/list?category=${catKey}`}
+                  className="flex-none w-[200px] sm:w-[220px] group snap-start py-10"
+                >
+                  <div className="relative h-[140px] bg-white border border-gray-200 rounded-sm flex flex-col items-center justify-center transition-all duration-500  group-hover:-translate-y-2">
+                    {/* "New" Badge */}
+                    {data.isNew && (
+                      <div className="absolute top-4 right-4 z-10 bg-[#E7F7F0] text-[#00B67A] text-[11px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
+                        New
+                      </div>
+                    )}
+
+                    {/* Icon/Emoji */}
+                    <div className="text-6xl mb-5 transform transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                      {data.emoji}
                     </div>
-                  )}
 
-                  {/* Icon/Emoji */}
-                  <div className="text-6xl mb-5 transform transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
-                    {data.emoji}
+                    {/* Label */}
+                    <h3 className="text-[16px] font-semibold text-[#191919] text-center px-4 line-clamp-1 group-hover:text-green-600 transition-colors">
+                      {data.label}
+                    </h3>
                   </div>
-
-                  {/* Label */}
-                  <h3 className="text-[16px] font-semibold text-[#191919] text-center px-4 line-clamp-1 group-hover:text-green-600 transition-colors">
-                    {data.label}
-                  </h3>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
     </section>
   );
